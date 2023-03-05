@@ -1,4 +1,4 @@
-﻿public interface ISpell
+﻿internal interface ISpell
 {
     public string Id { get; }
     public float Duration { get; }

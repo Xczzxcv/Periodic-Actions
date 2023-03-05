@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using SpellConfigs;
 using UnityEngine;
@@ -14,11 +16,9 @@ internal class GameManager : MonoBehaviour
     
     private TimelineManager _timelineManager;
     private TimeManager _timeManager;
-    private int _spellCastSimulated;
     private List<Actor> _playerTeam;
     private List<Actor> _enemyTeam;
 
-    private const int SpellCastSimulationsAmount = 10;
     private const int InitialCastTime = 0;
 
     private void Start()
@@ -55,6 +55,7 @@ internal class GameManager : MonoBehaviour
     private void Update()
     {
         _timeManager.Update();
+
         while (_timelineManager.Update())
         {
             var deferredCastedSpellInfo = _timelineManager.CastedSpellInfo.Value;
@@ -63,11 +64,7 @@ internal class GameManager : MonoBehaviour
             SimulateSpellCast(castedSpellCaster, previousCastTime);
         }
 
-        if (_spellCastSimulated >= SpellCastSimulationsAmount)
-        {
-            Debug.Log("Simulation stopped!!!!!!");
-            Debug.Break();
-        }
+        UpdateGameSpeed();
     }
 
     private void SimulateTeamSpellCast(List<Actor> castersTeam, List<Actor> targetTeam, double previousCastTime)
@@ -83,14 +80,35 @@ internal class GameManager : MonoBehaviour
         targetTeam ??= _playerTeam.Contains((Actor) spellCaster)
             ? _enemyTeam
             : _playerTeam;
-        var randomEnemyActor = targetTeam[Random.Range(0, targetTeam.Count)];
-
-        spellCaster.CastSpell(spellCaster.GetRandomSpellId(), new SpellCastInfo
+        if (targetTeam.All(actor => !actor.CanBeTargeted()))
         {
-            PreCastTime = previousCastTime,
-            Caster = spellCaster,
-            Target = randomEnemyActor,
-        });
-        _spellCastSimulated++;
+            Debug.Break();
+            Debug.Log("Team is dead....");
+            return;
+        }
+
+        Actor randomEnemyActor;
+        do
+        {
+            randomEnemyActor = targetTeam[Random.Range(0, targetTeam.Count)];
+        } while (!randomEnemyActor.CanBeTargeted());
+
+        if (spellCaster.CanCastSpells())
+        {
+            spellCaster.CastSpell(spellCaster.GetRandomSpellId(), 
+                new SpellCastInfo(previousCastTime, spellCaster, randomEnemyActor));
+        }
+    }
+
+    private void UpdateGameSpeed()
+    {
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value / 2, 5));
+        }
+        else if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value * 2, 5));
+        }
     }
 }

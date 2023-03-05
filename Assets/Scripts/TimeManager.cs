@@ -14,6 +14,8 @@ internal class TimeManager
     {
         _currentTime = new ReactiveProperty<double>(initialTime);
         _gameSpeed = new ReactiveProperty<double>(1);
+
+        _gameSpeed.Subscribe(gameSpeed => Debug.Log($"New game speed value: {gameSpeed}"));
     }
 
     public void Update()

@@ -1,11 +1,22 @@
 ﻿using System;
 
-public struct SpellCastInfo : IEquatable<SpellCastInfo>
+readonly struct SpellCastInfo : IEquatable<SpellCastInfo>
 {
-    public double PreCastTime;
-    public ISpellCaster Caster;
-    public ISpellTarget Target;
-    
+    public readonly double PreCastTime;
+    public readonly ISpellCaster Caster;
+    public readonly ISpellTarget Target;
+
+    public SpellCastInfo(
+        double preCastTime,
+        ISpellCaster caster,
+        ISpellTarget target
+    )
+    {
+        PreCastTime = preCastTime;
+        Caster = caster;
+        Target = target;
+    }
+
     public override string ToString()
     {
         return $"[SCI] PreTime: {PreCastTime}, caster: {Caster}, target: {Target}";

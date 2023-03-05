@@ -14,18 +14,24 @@ internal class Actor : ISpellCaster, ISpellTarget
         public string Name;
         public float Hp;
         public float Armor;
+        public ActorSide Side;
     }
+
+    public bool IsPlayerUnit => Side.Value == ActorSide.Player;
 
     public IReadOnlyReactiveProperty<float> Hp => _hp;
     public IReadOnlyReactiveProperty<float> Armor => _armor;
     public IReadOnlyReactiveProperty<bool> IsBusy => _isBusy;
+    public IReadOnlyReactiveProperty<ActorSide> Side => _side;
     public IReadOnlyReactiveProperty<bool> IsDead { get; }
 
     private readonly ReactiveProperty<float> _hp = new();
     private readonly ReactiveProperty<float> _armor = new();
     private readonly ReactiveProperty<bool> _isBusy = new(false);
+    private readonly ReactiveProperty<ActorSide> _side = new();
     private readonly Dictionary<string, ISpell> _spells = new();
     private readonly TimelineManager _timelineManager;
+    
     private string _name;
     [CanBeNull]
     private IDisposable _skillUsageSubscription;
@@ -49,7 +55,9 @@ internal class Actor : ISpellCaster, ISpellTarget
     {
         _hp.Value = config.Hp;
         _armor.Value = config.Armor;
+        _side.Value = config.Side;
         _name = config.Name;
+
         foreach (var spell in spells)
         {
             AddSpell(spell);
@@ -60,11 +68,17 @@ internal class Actor : ISpellCaster, ISpellTarget
         IsDead.Subscribe(isDead => Debug.Log($"[{_timelineManager.CurrentTime}] {this}) {nameof(isDead)} updated: {isDead}"));
     }
 
+    public bool CanCastSpells()
+    {
+        return !IsDead.Value && !_isBusy.Value;
+    }
+
     public SpellCastResult CastSpell(string spellId, SpellCastInfo castInfo)
     {
         Debug.Assert(castInfo.Caster == this);
         Debug.Assert(_spells.ContainsKey(spellId));
         Debug.Assert(!_isBusy.Value);
+        Debug.Assert(!IsDead.Value);
 
         if (!_spells.TryGetValue(spellId, out var spell))
         {
@@ -86,17 +100,16 @@ internal class Actor : ISpellCaster, ISpellTarget
         return SpellCastResult.Success;
     }
 
+    public bool CanBeTargeted()
+    {
+        return !IsDead.Value;
+    }
+
     public void ApplyDamage(float damageAmount, bool pierceArmor = false)
     {
-        float piercedDamageAmount;
-        if (pierceArmor)
-        {
-            piercedDamageAmount = damageAmount;
-        }
-        else
-        {
-            piercedDamageAmount = damageAmount - _armor.Value;
-        }
+        var piercedDamageAmount = pierceArmor 
+            ? damageAmount 
+            : Math.Max(0, damageAmount - _armor.Value);
 
         _hp.SetValueAndForceNotify(_hp.Value - piercedDamageAmount);
     }
