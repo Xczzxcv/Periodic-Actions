@@ -6,7 +6,7 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
     where TSpellConfig : SpellConfigBase
 {
     public string Id => SpellConfig.Id;
-    public float Duration => SpellConfig.Duration;
+    public SpellConfigBase Config => SpellConfig;
     protected abstract bool DamagePiercesArmor { get; }
 
     protected readonly TSpellConfig SpellConfig;

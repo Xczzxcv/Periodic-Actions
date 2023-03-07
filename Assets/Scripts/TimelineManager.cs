@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Spells;
 using UniRx;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ internal class TimelineManager
     public void AddSpellCastRequest(ISpell spell, SpellCastInfo castInfo)
     {
         PreCastSpell(spell, castInfo);
-        var castTime = castInfo.PreCastTime + spell.Duration;
+        var castTime = castInfo.PreCastTime + spell.Config.Duration;
         _spellsToCast.Add(new DeferredSpellCastInfo
         (
             castTime,
@@ -31,23 +32,35 @@ internal class TimelineManager
         _spellsToCast.Sort(DeferredSpellCastInfo.TimeComparison);
     }
 
-    public bool Update()
+    internal enum UpdateResult
+    {
+        NoSpellsProcessed,
+        SpellProcessedButFailedToBeCasted,
+        SpellProcessedAndCasted,
+    }
+
+    public UpdateResult Update()
     {
         if (!_spellsToCast.Any())
         {
-            return false;
+            return UpdateResult.NoSpellsProcessed;
         }
 
         var deferredCastInfo = _spellsToCast.Last();
         if (_timeManager.CurrentTime.Value < deferredCastInfo.CastTime)
         {
-            return false;
+            return UpdateResult.NoSpellsProcessed;
         }
 
         _spellsToCast.RemoveAt(_spellsToCast.Count - 1);
 
+        if (!deferredCastInfo.CastInfo.Caster.IsAlive)
+        {
+            return UpdateResult.SpellProcessedButFailedToBeCasted;
+        }
+
         CastSpell(deferredCastInfo);
-        return true;
+        return UpdateResult.SpellProcessedAndCasted;
     }
 
     private void PreCastSpell(ISpell spell, SpellCastInfo castInfo)

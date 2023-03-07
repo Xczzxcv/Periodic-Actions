@@ -1,4 +1,5 @@
 ﻿using System;
+using Spells;
 
 readonly struct SpellCastInfo : IEquatable<SpellCastInfo>
 {

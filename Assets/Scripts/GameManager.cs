@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using SpellConfigs;
+using Spells;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 internal class GameManager : MonoBehaviour
 {
-    [SerializeReference, ReferencePicker(TypeGrouping = TypeGrouping.ByFlatName)]
-    private List<SpellConfigBase> spellConfigs; 
+    [SerializeField] private ActorsManager actorsManager;
 
-    [SerializeField] private List<Actor.Config> playerTeam; 
-    [SerializeField] private List<Actor.Config> enemyTeam; 
-    
+    [SerializeReference, ReferencePicker(TypeGrouping = TypeGrouping.ByFlatName)]
+    private List<SpellConfigBase> spellConfigs;
+
+    [SerializeField] private List<Actor.Config> playerTeam;
+    [SerializeField] private List<Actor.Config> enemyTeam;
+
     private TimelineManager _timelineManager;
     private TimeManager _timeManager;
     private List<Actor> _playerTeam;
@@ -46,7 +49,18 @@ internal class GameManager : MonoBehaviour
             _enemyTeam.Add(Actor.Build(_timelineManager, actorConfig, spells));
         }
 
+        foreach (var actor in _playerTeam.Concat(_enemyTeam))
+        {
+            actorsManager.SpawnActor(actor);
+        }
+
         Debug.Log("Init ended");
+
+        // var spellCaster = _playerTeam[0];
+        // var spellTarget = _enemyTeam[0];
+        // spellCaster.CastSpell("fast_hit", new SpellCastInfo(0, spellCaster, spellTarget));
+        // spellCaster.ApplyDamage(1000);
+        // return;
 
         SimulateTeamSpellCast(_playerTeam, _enemyTeam, InitialCastTime);
         SimulateTeamSpellCast(_enemyTeam, _playerTeam, InitialCastTime);
@@ -56,7 +70,7 @@ internal class GameManager : MonoBehaviour
     {
         _timeManager.Update();
 
-        while (_timelineManager.Update())
+        while (_timelineManager.Update() == TimelineManager.UpdateResult.SpellProcessedAndCasted)
         {
             var deferredCastedSpellInfo = _timelineManager.CastedSpellInfo.Value;
             var castedSpellCaster = deferredCastedSpellInfo.CastInfo.Caster;
@@ -75,7 +89,8 @@ internal class GameManager : MonoBehaviour
         }
     }
 
-    private void SimulateSpellCast(ISpellCaster spellCaster, double previousCastTime, [CanBeNull] List<Actor> targetTeam = null)
+    private void SimulateSpellCast(ISpellCaster spellCaster, double previousCastTime, 
+        [CanBeNull] List<Actor> targetTeam = null)
     {
         targetTeam ??= _playerTeam.Contains((Actor) spellCaster)
             ? _enemyTeam

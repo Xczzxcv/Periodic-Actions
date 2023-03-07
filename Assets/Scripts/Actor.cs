@@ -1,7 +1,8 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
+using Spells;
 using UniRx;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,23 +19,23 @@ internal class Actor : ISpellCaster, ISpellTarget
     }
 
     public bool IsPlayerUnit => Side.Value == ActorSide.Player;
+    public bool IsAlive => !IsDead.Value;
 
     public IReadOnlyReactiveProperty<float> Hp => _hp;
     public IReadOnlyReactiveProperty<float> Armor => _armor;
-    public IReadOnlyReactiveProperty<bool> IsBusy => _isBusy;
+    public IReadOnlyReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> CastingSpell => _castingSpell;
     public IReadOnlyReactiveProperty<ActorSide> Side => _side;
     public IReadOnlyReactiveProperty<bool> IsDead { get; }
+    public string? Name { get; private set; }
 
     private readonly ReactiveProperty<float> _hp = new();
     private readonly ReactiveProperty<float> _armor = new();
-    private readonly ReactiveProperty<bool> _isBusy = new(false);
+    private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _castingSpell = new();
     private readonly ReactiveProperty<ActorSide> _side = new();
     private readonly Dictionary<string, ISpell> _spells = new();
     private readonly TimelineManager _timelineManager;
     
-    private string _name;
-    [CanBeNull]
-    private IDisposable _skillUsageSubscription;
+    private IDisposable? _skillUsageSubscription;
 
     public static Actor Build(TimelineManager timelineManager, Config config, params ISpell[] spells)
     {
@@ -56,7 +57,7 @@ internal class Actor : ISpellCaster, ISpellTarget
         _hp.Value = config.Hp;
         _armor.Value = config.Armor;
         _side.Value = config.Side;
-        _name = config.Name;
+        Name = config.Name;
 
         foreach (var spell in spells)
         {
@@ -70,14 +71,14 @@ internal class Actor : ISpellCaster, ISpellTarget
 
     public bool CanCastSpells()
     {
-        return !IsDead.Value && !_isBusy.Value;
+        return !IsDead.Value && _castingSpell.Value.Spell == null;
     }
 
     public SpellCastResult CastSpell(string spellId, SpellCastInfo castInfo)
     {
         Debug.Assert(castInfo.Caster == this);
         Debug.Assert(_spells.ContainsKey(spellId));
-        Debug.Assert(!_isBusy.Value);
+        Debug.Assert(_castingSpell.Value.Spell == null);
         Debug.Assert(!IsDead.Value);
 
         if (!_spells.TryGetValue(spellId, out var spell))
@@ -86,7 +87,7 @@ internal class Actor : ISpellCaster, ISpellTarget
         }
 
         _timelineManager.AddSpellCastRequest(spell, castInfo);
-        _isBusy.Value = true;
+        _castingSpell.Value = (spell, castInfo);
 
         _skillUsageSubscription?.Dispose();
         _skillUsageSubscription = _timelineManager.CastedSpellInfo.Subscribe(deferredCastInfo =>
@@ -94,7 +95,7 @@ internal class Actor : ISpellCaster, ISpellTarget
             if (deferredCastInfo.CastInfo.Equals(castInfo)
                 && deferredCastInfo.Spell == spell)
             {
-                _isBusy.Value = false;
+                _castingSpell.Value = default;
             }
         });
         return SpellCastResult.Success;
@@ -129,8 +130,12 @@ internal class Actor : ISpellCaster, ISpellTarget
         _spells.Remove(spell.Id);
     }
 
-    public override string ToString() => $"Actor '{_name}'";
+    public bool HasSpell(string spellId)
+    {
+        return _spells.ContainsKey(spellId);
+    }
 
+    public override string ToString() => $"Actor '{Name}'";
 
     #region Debug
 

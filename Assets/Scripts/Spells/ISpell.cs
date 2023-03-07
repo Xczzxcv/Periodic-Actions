@@ -1,7 +1,12 @@
-﻿internal interface ISpell
+﻿using SpellConfigs;
+
+namespace Spells
+{
+internal interface ISpell
 {
     public string Id { get; }
-    public float Duration { get; }
+    public SpellConfigBase Config { get; }
     public void PreCast(SpellCastInfo castInfo);
     public void Cast(SpellCastInfo castInfo);
+}
 }
