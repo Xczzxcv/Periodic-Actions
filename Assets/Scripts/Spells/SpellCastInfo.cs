@@ -1,4 +1,6 @@
 ﻿using System;
+using Actors;
+using JetBrains.Annotations;
 
 namespace Spells
 {
@@ -6,12 +8,12 @@ internal readonly struct SpellCastInfo : IEquatable<SpellCastInfo>
 {
     public readonly double InitialCastTime;
     public readonly Actor Caster;
-    public readonly Actor Target;
+    [CanBeNull] public readonly Actor Target;
 
     public SpellCastInfo(
         double initialCastTime,
         Actor caster,
-        Actor target
+        [CanBeNull] Actor target
     )
     {
         InitialCastTime = initialCastTime;

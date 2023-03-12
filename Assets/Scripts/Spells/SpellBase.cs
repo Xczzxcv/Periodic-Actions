@@ -7,6 +7,7 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
 {
     public string Id => SpellConfig.Id;
     public SpellConfigBase Config => SpellConfig;
+    public abstract bool IsTargeted { get; }
     protected abstract bool DamagePiercesArmor { get; }
 
     protected readonly TSpellConfig SpellConfig;
@@ -23,8 +24,11 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
 
     public virtual void MainCast(SpellCastInfo castInfo)
     {
-        castInfo.Target.ApplyDamage(new DamageInfo(castInfo.Caster, SpellConfig.Damage, 
-            DamagePiercesArmor, false));
+        if (IsTargeted)
+        {
+            castInfo.Target.ApplyDamage(new DamageInfo(castInfo.Caster, SpellConfig.Damage,
+                DamagePiercesArmor, false));
+        }
     }
 
     public virtual void PostCast(SpellCastInfo castInfo)

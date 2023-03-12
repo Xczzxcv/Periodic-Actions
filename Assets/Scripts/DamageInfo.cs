@@ -1,4 +1,6 @@
-﻿internal readonly struct DamageInfo
+﻿using Actors;
+
+internal readonly struct DamageInfo
 {
     public readonly Actor DamageSource;
     public readonly float DamageAmount;

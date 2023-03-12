@@ -7,14 +7,18 @@ using UnityEngine;
 internal class TimelineManager
 {
     public double CurrentTime => _timeManager.CurrentTime.Value;
+    public bool IsPaused => _timeManager.IsPaused.Value;
 
     public IReadOnlyReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> InitCastedSpellInfo 
         => _initCastedSpellInfo;
     public IReadOnlyReactiveProperty<DeferredSpellCastInfo> MainCastedSpellInfo 
         => _mainCastedSpellInfo;
-    
-    private readonly ReactiveProperty<DeferredSpellCastInfo> _mainCastedSpellInfo = new ();
+    public IReadOnlyReactiveProperty<DeferredSpellCastInfo> PostCastedSpellInfo 
+        => _postCastedSpellInfo;
+
     private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _initCastedSpellInfo = new ();
+    private readonly ReactiveProperty<DeferredSpellCastInfo> _mainCastedSpellInfo = new ();
+    private readonly ReactiveProperty<DeferredSpellCastInfo> _postCastedSpellInfo = new ();
     private readonly List<DeferredSpellCastInfo> _spellsToCast = new ();
     private readonly TimeManager _timeManager;
 
@@ -46,6 +50,11 @@ internal class TimelineManager
 
     public UpdateResult Update()
     {
+        if (IsPaused)
+        {
+            return UpdateResult.NoSpellsProcessed;
+        }
+        
         if (!_spellsToCast.Any())
         {
             return UpdateResult.NoSpellsProcessed;
@@ -91,5 +100,17 @@ internal class TimelineManager
         Debug.Log($"[{CurrentTime}] {deferredCastInfo.Spell} being POST casted " +
                   $"by {deferredCastInfo.CastInfo.Caster} on {deferredCastInfo.CastInfo.Target}");
         deferredCastInfo.Spell.PostCast(deferredCastInfo.CastInfo);
+        deferredCastInfo.CastInfo.Caster.ProcessCastingEnded();
+        _postCastedSpellInfo.Value = deferredCastInfo;
+    }
+
+    public void Pause()
+    {
+        _timeManager.Pause();
+    }
+
+    public void Resume()
+    {
+        _timeManager.Resume();
     }
 }

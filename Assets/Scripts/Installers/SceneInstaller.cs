@@ -5,14 +5,24 @@ namespace Installers
 {
 public class SceneInstaller : MonoInstaller
 {
-    [SerializeField] private GameManager gameManager;
     [SerializeField] private BattleUiController battleUiControllerPrefab;
+    [SerializeField] private RectTransform uiRoot;
 
     public override void InstallBindings()
     {
-        Container.Bind<GameManager>().FromInstance(gameManager).AsSingle();
-        
-        Container.InstantiatePrefabForComponent<BattleUiController>(battleUiControllerPrefab);
+        BindTimelineManager();
+
+        InstantiateBattleUiController();
+    }
+
+    private void BindTimelineManager()
+    {
+        Container.Bind<TimelineManager>().AsSingle();
+    }
+
+    private void InstantiateBattleUiController()
+    {
+        Container.InstantiatePrefab(battleUiControllerPrefab, uiRoot);
     }
 }
 }

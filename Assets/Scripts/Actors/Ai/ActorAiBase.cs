@@ -3,7 +3,11 @@
 internal abstract class ActorAiBase : IActorAi
 {
     internal struct OuterWorldInfo
-    { }
+    {
+        public ActorsTeam AllyTeam;
+        public ActorsTeam EnemyTeam;
+        public double PreviousCastTime;
+    }
 
     protected readonly Actor Actor;
 
@@ -12,6 +16,6 @@ internal abstract class ActorAiBase : IActorAi
         Actor = actor;
     }
 
-    public abstract void CastSpell(OuterWorldInfo info);
+    public abstract ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo);
 }
 }

@@ -28,8 +28,7 @@ public class ProjectInstaller : MonoInstaller
 
     private void BindTimeManager()
     {
-        var timeManager = new TimeManager();
-        Container.Bind<TimeManager>().FromInstance(timeManager).AsSingle();
+        Container.Bind<TimeManager>().AsSingle();
     }
 }
 }

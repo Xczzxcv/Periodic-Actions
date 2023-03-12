@@ -406,8 +406,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2041910577}
+  m_Children: []
   m_Father: {fileID: 1157492863}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -801,29 +800,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8264e8fb6cd064089dd1577bef45c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actorsManager: {fileID: 1781958169}
-  playerTeam:
-  - Name: actor1
-    Hp: 1000
-    Armor: 0
-    Side: 1
-    SpellIds: []
-  - Name: actor2
-    Hp: 1000
-    Armor: 0
-    Side: 1
-    SpellIds: []
-  enemyTeam:
-  - Name: actor3
-    Hp: 1000
-    Armor: 0
-    Side: 2
-    SpellIds: []
-  - Name: actor4
-    Hp: 1000
-    Armor: 0
-    Side: 2
-    SpellIds: []
 --- !u!114 &1666255770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,8 +812,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6891f8971a245866ed0c945fbcd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1666255769}
   battleUiControllerPrefab: {fileID: 5759982675061982985, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
+  uiRoot: {fileID: 849051724}
 --- !u!1 &1766035672
 GameObject:
   m_ObjectHideFlags: 0
@@ -898,6 +874,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3ecf57773bfd24ea23ff8fa1ff59fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTeamConfigs:
+  - Name: actor1
+    Hp: 10
+    Armor: 0
+    Side: 1
+    AiConfig: 
+    SpellIds: []
+  - Name: actor2
+    Hp: 10
+    Armor: 0
+    Side: 1
+    AiConfig: 
+    SpellIds: []
+  - Name: actor3
+    Hp: 10
+    Armor: 0
+    Side: 1
+    AiConfig: 
+    SpellIds: []
+  - Name: actor4
+    Hp: 10
+    Armor: 0
+    Side: 1
+    AiConfig: 
+    SpellIds: []
+  enemyTeamConfigs:
+  - Name: actor5
+    Hp: 10
+    Armor: 0
+    Side: 2
+    AiConfig: 
+    SpellIds: []
+  - Name: actor6
+    Hp: 10
+    Armor: 0
+    Side: 2
+    AiConfig: 
+    SpellIds: []
+  - Name: actor7
+    Hp: 10
+    Armor: 0
+    Side: 2
+    AiConfig: 
+    SpellIds: []
+  - Name: actor8
+    Hp: 10
+    Armor: 0
+    Side: 2
+    AiConfig: 
+    SpellIds: []
   playerTeamPositions:
   - {fileID: 1135892796}
   - {fileID: 1766035673}
@@ -1022,105 +1048,3 @@ Transform:
   m_Father: {fileID: 1781958170}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!224 &2041910577 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-  m_PrefabInstance: {fileID: 5759982675721736763}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &5759982675721736763
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 849051724}
-    m_Modifications:
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982986, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5759982675061982987, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}
-      propertyPath: m_Name
-      value: Battle Screen
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 956dc38002f5bc745b0c6dd802d0761f, type: 3}

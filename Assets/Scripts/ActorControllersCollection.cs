@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Actors;
 
 internal class ActorControllersCollection : Dictionary<Actor, ActorController>, IDisposable
 {

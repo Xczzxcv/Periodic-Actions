@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Actors;
 using Actors.Ai;
 using JetBrains.Annotations;
 using Spells;
@@ -9,6 +8,8 @@ using UniRx;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+namespace Actors
+{
 internal class Actor : IDisposable
 {
     [Serializable]
@@ -18,6 +19,7 @@ internal class Actor : IDisposable
         public float Hp;
         public float Armor;
         public ActorSide Side;
+        public string AiConfig;
         public string[] SpellIds;
     }
 
@@ -30,6 +32,7 @@ internal class Actor : IDisposable
     public IReadOnlyReactiveProperty<ActorSide> Side => _side;
     public IReadOnlyReactiveProperty<bool> IsDead { get; private set; }
     [CanBeNull] public string Name { get; private set; }
+    public IReadOnlyDictionary<string, ISpell> Spells => _spells;
 
     private readonly TimelineManager _timelineManager;
     private readonly SpellsFactory _spellsFactory;
@@ -39,9 +42,7 @@ internal class Actor : IDisposable
     private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _castingSpell = new();
     private ReactiveProperty<ActorSide> _side;
     private readonly Dictionary<string, ISpell> _spells = new();
-
-
-    [CanBeNull] private IDisposable _skillUsageSubscription;
+    
     private IActorAi _ai;
 
     public Actor(TimelineManager timelineManager, SpellsFactory spellsFactory)
@@ -58,6 +59,7 @@ internal class Actor : IDisposable
         _armor = new (config.Armor);
         _side = new (config.Side);
         IsDead = _hp.Select(hp => hp <= 0).ToReactiveProperty();
+        _ai = new RandomActorAi(this);
         Name = config.Name;
 
         foreach (var spellId in config.SpellIds)
@@ -76,31 +78,26 @@ internal class Actor : IDisposable
         return !IsDead.Value && _castingSpell.Value.Spell == null;
     }
 
-    public SpellCastResult CastSpell(string spellId, SpellCastInfo castInfo)
+    public SpellCastResult CastSpell(ActorSpellCastChoice spellCastChoice)
     {
-        Debug.Assert(castInfo.Caster == this);
-        Debug.Assert(_spells.ContainsKey(spellId));
+        Debug.Assert(spellCastChoice.CastInfo.Caster == this);
+        Debug.Assert(_spells.ContainsKey(spellCastChoice.SpellId));
         Debug.Assert(_castingSpell.Value.Spell == null);
         Debug.Assert(!IsDead.Value);
 
-        if (!_spells.TryGetValue(spellId, out var spell))
+        if (!_spells.TryGetValue(spellCastChoice.SpellId, out var spell))
         {
             return SpellCastResult.Fail;
         }
 
-        _timelineManager.AddSpellCastRequest(spell, castInfo);
-        _castingSpell.Value = (spell, castInfo);
-
-        _skillUsageSubscription?.Dispose();
-        _skillUsageSubscription = _timelineManager.MainCastedSpellInfo.Subscribe(deferredCastInfo =>
-        {
-            if (deferredCastInfo.CastInfo.Equals(castInfo)
-                && deferredCastInfo.Spell == spell)
-            {
-                _castingSpell.Value = default;
-            }
-        });
+        _timelineManager.AddSpellCastRequest(spell, spellCastChoice.CastInfo);
+        _castingSpell.Value = (spell, spellCastChoice.CastInfo);
         return SpellCastResult.Success;
+    }
+
+    public void ProcessCastingEnded()
+    {
+        _castingSpell.Value = default;
     }
 
     public bool CanBeTargeted()
@@ -156,6 +153,11 @@ internal class Actor : IDisposable
 
     #endregion
 
+    public ActorSpellCastChoice GetAiSpellChoice(ActorAiBase.OuterWorldInfo outerWorldInfo)
+    {
+        return _ai.ChooseSpell(outerWorldInfo);
+    }
+
     public void Dispose()
     {
         foreach (var spell in _spells.Values)
@@ -163,4 +165,5 @@ internal class Actor : IDisposable
             spell?.Dispose();
         }
     }
+}
 }

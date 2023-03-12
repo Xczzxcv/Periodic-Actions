@@ -7,6 +7,7 @@ namespace Spells
 {
 internal class ReturnDamageSpell : SpellBase<ReturnDamageSpellConfig>
 {
+    public override bool IsTargeted => false;
     protected override bool DamagePiercesArmor => false;
 
     private IDisposable _subscription;

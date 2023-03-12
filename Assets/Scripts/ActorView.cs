@@ -1,5 +1,6 @@
 using System;
 using Actors;
+using DG.Tweening;
 using Spells;
 using TMPro;
 using UI;
@@ -7,7 +8,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
-internal class ActorController : MonoBehaviour, IDisposable
+internal class ActorView : MonoBehaviour, IDisposable
 {
     [SerializeField] private ActorTargetPointerController pointerController;
     [SerializeField] private TextMeshProUGUI nameText;
@@ -20,6 +21,11 @@ internal class ActorController : MonoBehaviour, IDisposable
     [SerializeField] private Color playerSideColor;
     [SerializeField] private Color enemySideColor;
     [SerializeField] private Image sideIcon;
+    [Header("Model")]
+    [SerializeField] private SpriteRenderer model;
+    [SerializeField] private Color regularColor;
+    [SerializeField] private Color highlightedColor;
+    [SerializeField] private float highlightSwitchAnimDuration;
 
     private readonly CompositeDisposable _disposables = new();
 
@@ -94,6 +100,12 @@ internal class ActorController : MonoBehaviour, IDisposable
             return;
         }
 
+        if (!value.Spell.IsTargeted)
+        {
+            pointerController.RemovePointer();
+            return;
+        }
+
         var spellTarget = value.CastInfo.Target;
         if (_actorControllers.TryGetValue(spellTarget, out var actorController))
         {
@@ -108,6 +120,14 @@ internal class ActorController : MonoBehaviour, IDisposable
     private void Unsubscribe(Actor actor)
     {
         _disposables.Clear();
+    }
+
+    public void SetHighlighted(bool active)
+    {
+        var targetColor = active
+            ? highlightedColor
+            : regularColor;
+        model.DOColor(targetColor, highlightSwitchAnimDuration);
     }
 
     public void Dispose()

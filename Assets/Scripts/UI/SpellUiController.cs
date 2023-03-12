@@ -18,13 +18,18 @@ internal class SpellUiController : MonoBehaviour
         view.Setup(new SpellView.Config
         {
             SpellName = spell?.Config.Id,
-            SpellProperties = new Dictionary<string, object>
-            {
-                {"damage", spell?.Config.Damage},
-                {"armor", spell?.Config.Armor},
-                {"duration", spell?.Config.Duration},
-            }
+            SpellProperties = GetSpellProperties(spell)
         });
+    }
+
+    private static Dictionary<string, object> GetSpellProperties(ISpell spell)
+    {
+        return new Dictionary<string, object>
+        {
+            {"damage", spell?.Config.Damage},
+            {"armor", spell?.Config.Armor},
+            {"duration", spell?.Config.Duration},
+        };
     }
 }
 }

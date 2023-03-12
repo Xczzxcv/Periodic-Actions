@@ -16,7 +16,8 @@ internal class ActorsFactory : MonoBehaviour
         _diContainer = diContainer;
     }
 
-    public ActorController BuildActorController(Vector3 spawnPos, ActorControllersCollection actorControllers)
+    public ActorController BuildActorController(Vector3 spawnPos, 
+        ActorControllersCollection actorControllers)
     {
         var actorController = _diContainer.InstantiatePrefabForComponent<ActorController>(
             actorPrefab, spawnPos, Quaternion.identity, null);
