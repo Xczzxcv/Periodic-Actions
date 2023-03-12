@@ -1,4 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-internal class ActorControllersCollection : Dictionary<Actor, ActorController>
-{ }
+internal class ActorControllersCollection : Dictionary<Actor, ActorController>, IDisposable
+{
+    public void Dispose()
+    {
+        foreach (var actorController in Values)
+        {
+            actorController.Dispose();
+        }
+    }
+}

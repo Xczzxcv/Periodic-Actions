@@ -1,4 +1,5 @@
 using System;
+using Actors;
 using Spells;
 using TMPro;
 using UI;
@@ -13,6 +14,7 @@ internal class ActorController : MonoBehaviour, IDisposable
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI armorText;
     [SerializeField] private SpellUiController castingSpell;
+    [SerializeField] private SpellStateController spellStateController;
     [SerializeField] private Image isDeadIcon;
     [Header("Side")]
     [SerializeField] private Color playerSideColor;
@@ -37,11 +39,11 @@ internal class ActorController : MonoBehaviour, IDisposable
 
         SetupPointerController(_actor);
         SetupName(_actor.Name);
-        SetupHp(_actor.Hp.Value);
-        SetupArmor(_actor.Armor.Value);
-        SetupCastingSpell(_actor.CastingSpell.Value);
-        SetupIsDead(_actor.IsDead.Value);
-        SetupSide(_actor.Side.Value);
+        // SetupHp(_actor.Hp.Value);
+        // SetupArmor(_actor.Armor.Value);
+        // SetupCastingSpell(_actor.CastingSpell.Value);
+        // SetupIsDead(_actor.IsDead.Value);
+        // SetupSide(_actor.Side.Value);
     }
 
     private void Subscribe(Actor actor)
@@ -59,8 +61,12 @@ internal class ActorController : MonoBehaviour, IDisposable
     
     private void SetupArmor(float value) => armorText.text = $"{value}";
     
-    private void SetupCastingSpell((ISpell Spell, SpellCastInfo Castinfo) value) => castingSpell.Setup(value.Spell);
-    
+    private void SetupCastingSpell((ISpell Spell, SpellCastInfo Castinfo) value)
+    {
+        spellStateController.Setup(value.Spell, value.Castinfo);
+        castingSpell.Setup(value.Spell);
+    }
+
     private void SetupIsDead(bool value) => isDeadIcon.enabled = value;
 
     private void SetupSide(ActorSide value)
@@ -89,8 +95,7 @@ internal class ActorController : MonoBehaviour, IDisposable
         }
 
         var spellTarget = value.CastInfo.Target;
-        if (spellTarget is Actor targetActor 
-            && _actorControllers.TryGetValue(targetActor, out var actorController))
+        if (_actorControllers.TryGetValue(spellTarget, out var actorController))
         {
             pointerController.PointTo(actorController);
         }

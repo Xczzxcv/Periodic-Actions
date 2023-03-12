@@ -1,5 +1,8 @@
-﻿public enum SpellCastResult
+﻿namespace Spells
+{
+public enum SpellCastResult
 {
     Success,
     Fail
+}
 }

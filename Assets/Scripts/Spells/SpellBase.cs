@@ -16,17 +16,25 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
         SpellConfig = spellConfig;
     }
 
-    public void PreCast(SpellCastInfo castInfo)
+    public virtual void InitialCast(SpellCastInfo castInfo)
     {
         castInfo.Caster.ChangeArmor(SpellConfig.Armor);
     }
 
-    public virtual void Cast(SpellCastInfo castInfo)
+    public virtual void MainCast(SpellCastInfo castInfo)
     {
-        castInfo.Target.ApplyDamage(SpellConfig.Damage, DamagePiercesArmor);
+        castInfo.Target.ApplyDamage(new DamageInfo(castInfo.Caster, SpellConfig.Damage, 
+            DamagePiercesArmor, false));
+    }
+
+    public virtual void PostCast(SpellCastInfo castInfo)
+    {
         castInfo.Caster.ChangeArmor(-SpellConfig.Armor);
     }
 
     public override string ToString() => $"Spell ({SpellConfig.Id})";
+
+    public virtual void Dispose()
+    { }
 }
 }

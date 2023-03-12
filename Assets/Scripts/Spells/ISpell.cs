@@ -6,7 +6,9 @@ internal interface ISpell
 {
     public string Id { get; }
     public SpellConfigBase Config { get; }
-    public void PreCast(SpellCastInfo castInfo);
-    public void Cast(SpellCastInfo castInfo);
+    public void InitialCast(SpellCastInfo castInfo);
+    public void PostCast(SpellCastInfo castInfo);
+    public void MainCast(SpellCastInfo castInfo);
+    public void Dispose();
 }
 }

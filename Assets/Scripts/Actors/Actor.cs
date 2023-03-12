@@ -1,13 +1,15 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Actors;
+using Actors.Ai;
+using JetBrains.Annotations;
 using Spells;
 using UniRx;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-internal class Actor : ISpellCaster, ISpellTarget
+internal class Actor : IDisposable
 {
     [Serializable]
     internal struct Config
@@ -16,6 +18,7 @@ internal class Actor : ISpellCaster, ISpellTarget
         public float Hp;
         public float Armor;
         public ActorSide Side;
+        public string[] SpellIds;
     }
 
     public bool IsPlayerUnit => Side.Value == ActorSide.Player;
@@ -25,42 +28,41 @@ internal class Actor : ISpellCaster, ISpellTarget
     public IReadOnlyReactiveProperty<float> Armor => _armor;
     public IReadOnlyReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> CastingSpell => _castingSpell;
     public IReadOnlyReactiveProperty<ActorSide> Side => _side;
-    public IReadOnlyReactiveProperty<bool> IsDead { get; }
-    public string? Name { get; private set; }
+    public IReadOnlyReactiveProperty<bool> IsDead { get; private set; }
+    [CanBeNull] public string Name { get; private set; }
 
-    private readonly ReactiveProperty<float> _hp = new();
-    private readonly ReactiveProperty<float> _armor = new();
-    private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _castingSpell = new();
-    private readonly ReactiveProperty<ActorSide> _side = new();
-    private readonly Dictionary<string, ISpell> _spells = new();
     private readonly TimelineManager _timelineManager;
-    
-    private IDisposable? _skillUsageSubscription;
+    private readonly SpellsFactory _spellsFactory;
 
-    public static Actor Build(TimelineManager timelineManager, Config config, params ISpell[] spells)
-    {
-        var newActor = new Actor(timelineManager);
-        newActor.Init(config, spells);
+    private ReactiveProperty<float> _hp;
+    private ReactiveProperty<float> _armor;
+    private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _castingSpell = new();
+    private ReactiveProperty<ActorSide> _side;
+    private readonly Dictionary<string, ISpell> _spells = new();
 
-        return newActor;
-    }
 
-    private Actor(TimelineManager timelineManager)
+    [CanBeNull] private IDisposable _skillUsageSubscription;
+    private IActorAi _ai;
+
+    public Actor(TimelineManager timelineManager, SpellsFactory spellsFactory)
     {
         _timelineManager = timelineManager;
-
-        IsDead = _hp.Select(hp => hp <= 0).ToReactiveProperty();
+        _spellsFactory = spellsFactory;
     }
 
-    private void Init(Config config, params ISpell[] spells)
+    public void Init(Config config)
     {
-        _hp.Value = config.Hp;
-        _armor.Value = config.Armor;
-        _side.Value = config.Side;
+        Debug.Assert(config.SpellIds.Length > 0);
+
+        _hp = new (config.Hp);
+        _armor = new (config.Armor);
+        _side = new (config.Side);
+        IsDead = _hp.Select(hp => hp <= 0).ToReactiveProperty();
         Name = config.Name;
 
-        foreach (var spell in spells)
+        foreach (var spellId in config.SpellIds)
         {
+            var spell = _spellsFactory.BuildSpell(spellId);
             AddSpell(spell);
         }
 
@@ -90,7 +92,7 @@ internal class Actor : ISpellCaster, ISpellTarget
         _castingSpell.Value = (spell, castInfo);
 
         _skillUsageSubscription?.Dispose();
-        _skillUsageSubscription = _timelineManager.CastedSpellInfo.Subscribe(deferredCastInfo =>
+        _skillUsageSubscription = _timelineManager.MainCastedSpellInfo.Subscribe(deferredCastInfo =>
         {
             if (deferredCastInfo.CastInfo.Equals(castInfo)
                 && deferredCastInfo.Spell == spell)
@@ -106,13 +108,24 @@ internal class Actor : ISpellCaster, ISpellTarget
         return !IsDead.Value;
     }
 
-    public void ApplyDamage(float damageAmount, bool pierceArmor = false)
+    public void ApplyDamage(DamageInfo damageInfo)
     {
-        var piercedDamageAmount = pierceArmor 
-            ? damageAmount 
-            : Math.Max(0, damageAmount - _armor.Value);
+        if (damageInfo.DamageAmount == 0)
+        {
+            return;
+        }
+        
+        var piercedDamageAmount = damageInfo.PierceArmor
+            ? damageInfo.DamageAmount
+            : Math.Max(0, damageInfo.DamageAmount - _armor.Value);
 
         _hp.SetValueAndForceNotify(_hp.Value - piercedDamageAmount);
+        var damageEventInfo = new DamageEventInfo(
+            new DamageInfo(damageInfo.DamageSource, piercedDamageAmount, damageInfo.PierceArmor,
+                damageInfo.ReturnedDamage),
+            this
+        );
+        MessageBroker.Default.Publish(damageEventInfo);
     }
 
     public void ChangeArmor(float shiftAmount)
@@ -142,4 +155,12 @@ internal class Actor : ISpellCaster, ISpellTarget
     public string GetRandomSpellId() => _spells.Keys.ElementAt(Random.Range(0, _spells.Count));
 
     #endregion
+
+    public void Dispose()
+    {
+        foreach (var spell in _spells.Values)
+        {
+            spell?.Dispose();
+        }
+    }
 }
