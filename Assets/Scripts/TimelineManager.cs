@@ -6,6 +6,13 @@ using UnityEngine;
 
 internal class TimelineManager
 {
+    internal enum UpdateResult
+    {
+        NoSpellsProcessed,
+        SpellProcessedButFailedToBeCasted,
+        SpellProcessedAndCasted,
+    }
+
     public double CurrentTime => _timeManager.CurrentTime.Value;
     public bool IsPaused => _timeManager.IsPaused.Value;
 
@@ -26,11 +33,11 @@ internal class TimelineManager
     {
         _timeManager = timeManager;
     }
-    
+
     public void AddSpellCastRequest(ISpell spell, SpellCastInfo castInfo)
     {
         InitialCastSpell(spell, castInfo);
-        var castTime = castInfo.InitialCastTime + spell.Config.Duration;
+        var castTime = castInfo.InitialCastTime + spell.BaseConfig.Duration;
         _spellsToCast.Add(new DeferredSpellCastInfo
         (
             castTime,
@@ -39,13 +46,6 @@ internal class TimelineManager
             castInfo.Caster.IsPlayerUnit
         ));
         _spellsToCast.Sort(DeferredSpellCastInfo.TimeComparison);
-    }
-
-    internal enum UpdateResult
-    {
-        NoSpellsProcessed,
-        SpellProcessedButFailedToBeCasted,
-        SpellProcessedAndCasted,
     }
 
     public UpdateResult Update()
@@ -68,7 +68,7 @@ internal class TimelineManager
 
         _spellsToCast.RemoveAt(_spellsToCast.Count - 1);
 
-        if (!deferredCastInfo.CastInfo.Caster.IsAlive)
+        if (!deferredCastInfo.CastInfo.Caster.CanMainCastSpell())
         {
             PostCastSpell(deferredCastInfo);
             return UpdateResult.SpellProcessedButFailedToBeCasted;

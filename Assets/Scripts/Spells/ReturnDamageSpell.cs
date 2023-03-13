@@ -12,7 +12,7 @@ internal class ReturnDamageSpell : SpellBase<ReturnDamageSpellConfig>
 
     private IDisposable _subscription;
     
-    public ReturnDamageSpell(ReturnDamageSpellConfig spellConfig) : base(spellConfig)
+    public ReturnDamageSpell(ReturnDamageSpellConfig config) : base(config)
     { }
 
     public override void InitialCast(SpellCastInfo castInfo)
@@ -30,7 +30,7 @@ internal class ReturnDamageSpell : SpellBase<ReturnDamageSpellConfig>
             {
                 return;
             }
-
+            
             damageEvent.DamageInfo.DamageSource.ApplyDamage(new DamageInfo(
                 castInfo.Caster,
                 damageEvent.DamageInfo.DamageAmount,

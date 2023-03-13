@@ -42,12 +42,12 @@ internal readonly struct DeferredSpellCastInfo
         if (x.IsOrderFromPlayer == y.IsOrderFromPlayer)
         {
             // queue imitation
-            return Math.Sign(x._orderNumber - y._orderNumber);
+            return Math.Sign(y._orderNumber - x._orderNumber);
         }
 
         // descending
         return x.IsOrderFromPlayer
-            ? -1
-            : 1;
+            ? 1
+            : -1;
     }
 }

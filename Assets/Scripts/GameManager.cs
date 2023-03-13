@@ -18,8 +18,8 @@ internal class GameManager : MonoBehaviour
     {
         _timeManager.Update();
 
-        while (_timelineManager.Update() == TimelineManager.UpdateResult.SpellProcessedAndCasted
-               && !_timelineManager.IsPaused)
+        while (!_timelineManager.IsPaused 
+               && _timelineManager.Update() == TimelineManager.UpdateResult.SpellProcessedAndCasted)
         { }
 
         UpdateGameSpeed();

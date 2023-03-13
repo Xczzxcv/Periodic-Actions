@@ -1,66 +1,55 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Actors;
 using Actors.Ai;
+using Spells;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 internal class ActorsManager : MonoBehaviour, IDisposable
 {
-    [FormerlySerializedAs("playerTeam")]
+    [SerializeField] private ActorsSpawnManager actorsSpawnManager;
     [SerializeField] private List<Actor.Config> playerTeamConfigs;
-    [FormerlySerializedAs("enemyTeam")]
     [SerializeField] private List<Actor.Config> enemyTeamConfigs;
-    [SerializeField] private List<Transform> playerTeamPositions;
-    [SerializeField] private List<Transform> enemyTeamPositions;
-
-    private readonly HashSet<Vector3> _occupiedPositions = new();
-    private readonly ActorControllersCollection _actorControllers = new();
 
     private TimelineManager _timelineManager;
-    private ActorsFactory _actorsFactory;
     private ActorsTeam _playerTeam;
     private ActorsTeam _enemyTeam;
     private IDisposable _spellPostCastSubscription;
     private readonly Dictionary<Actor, IDisposable> _actorSpellUsageSubscriptions = new();
     private readonly Queue<(Actor Caster, double PreviousCastTime)> _unitsWaitingList = new();
 
-    private bool CurrentlyCastingSpell => _timelineManager.IsPaused;
+    private bool _currentlyCastingSpell;
 
     [Inject]
-    private void Construct(TimelineManager timelineManager, ActorsFactory actorsFactory)
+    private void Construct(TimelineManager timelineManager)
     {
         _timelineManager = timelineManager;
-        _actorsFactory = actorsFactory;
     }
 
     private void Start()
     {
         _spellPostCastSubscription = _timelineManager.PostCastedSpellInfo.Subscribe(OnNextSpellPostCast);
-        
-        _playerTeam = new ();
-        foreach (var actorConfig in playerTeamConfigs)
-        {
-            _playerTeam.AddMember(_actorsFactory.BuildActor(_timelineManager, actorConfig));
-        }
 
-        _enemyTeam = new ();
-        foreach (var actorConfig in enemyTeamConfigs)
-        {
-            _enemyTeam.AddMember(_actorsFactory.BuildActor(_timelineManager, actorConfig));
-        }
+        _playerTeam = SpawnActorsTeam(playerTeamConfigs);
+        _enemyTeam = SpawnActorsTeam(enemyTeamConfigs);
 
-        foreach (var actor in _playerTeam.Actors.Concat(_enemyTeam.Actors))
-        {
-            SpawnActor(actor);
-        }
-        
         Debug.Log("Init ended");
 
         InitSpellCasts();
+    }
+
+    private ActorsTeam SpawnActorsTeam(List<Actor.Config> configs)
+    {
+        var team = new ActorsTeam();
+        foreach (var actorConfig in configs)
+        {
+            var actor = actorsSpawnManager.SpawnActor(actorConfig);
+            team.AddMember(actor);
+        }
+
+        return team;
     }
 
     private void OnNextSpellPostCast(DeferredSpellCastInfo deferredCastInfo)
@@ -78,12 +67,18 @@ internal class ActorsManager : MonoBehaviour, IDisposable
             return;
         }
 
+        AddToCastQueue(caster, previousCastTime);
+    }
+
+    private void AddToCastQueue(Actor caster, double previousCastTime)
+    {
+        _timelineManager.Pause();
         _unitsWaitingList.Enqueue((caster, previousCastTime));
     }
 
     private void Update()
     {
-        if (CurrentlyCastingSpell)
+        if (_currentlyCastingSpell)
         {
             return;
         }
@@ -93,41 +88,60 @@ internal class ActorsManager : MonoBehaviour, IDisposable
             return;
         }
 
-        ProcessNewSpellCast(castingInfo.Caster, castingInfo.PreviousCastTime);
+        var spellCastResult = ProcessNewSpellCast(castingInfo.Caster, castingInfo.PreviousCastTime);
+        ProcessSpellCastConsequences(castingInfo.Caster, castingInfo.PreviousCastTime, spellCastResult);
     }
 
-    private void ProcessNewSpellCast(Actor caster, double previousCastTime)
+    private ActorController.SpellCastResult ProcessNewSpellCast(Actor caster, double previousCastTime)
     {
-        if (!caster.CanCastSpells())
+        if (!caster.CanStartSpellCast())
         {
-            return;
+            return ActorController.SpellCastResult.None;
         }
         
-        var actorController = _actorControllers[caster];
-        actorController.CastSpell(GetInfo(caster, previousCastTime));
+        var actorController = actorsSpawnManager.GetController(caster);
+        return actorController.CastSpell(GetOuterWorldInfo(caster, previousCastTime));
+    }
 
-        if (!caster.IsPlayerUnit)
+    private void ProcessSpellCastConsequences(Actor caster, double previousCastTime,
+        ActorController.SpellCastResult spellCastResult)
+    {
+        if (spellCastResult != ActorController.SpellCastResult.SpellInProcessOfCasting)
         {
+            ProcessResume();
             return;
         }
 
-        _timelineManager.Pause();
-        var spellUsageSubscription = _timelineManager.InitCastedSpellInfo.Subscribe(value =>
+        _currentlyCastingSpell = true;
+        var spellUsageSubscription = _timelineManager
+            .InitCastedSpellInfo.Subscribe(OnNextInitSpellCast);
+        _actorSpellUsageSubscriptions.Add(caster, spellUsageSubscription);
+
+        void OnNextInitSpellCast((ISpell Spell, SpellCastInfo CastInfo) value)
         {
-            if (value.CastInfo.Caster != caster || value.CastInfo.InitialCastTime != previousCastTime)
+            if (value.CastInfo.Caster != caster
+                || value.CastInfo.InitialCastTime != previousCastTime)
             {
                 return;
             }
 
             _actorSpellUsageSubscriptions[caster].Dispose();
             _actorSpellUsageSubscriptions.Remove(caster);
-            if (_actorSpellUsageSubscriptions.Count <= 0)
-            {
-                _timelineManager.Resume();
-            }
-        });
+            ProcessResume();
+        }
+    }
 
-        _actorSpellUsageSubscriptions.Add(caster, spellUsageSubscription);
+    private void ProcessResume()
+    {
+        _currentlyCastingSpell = false;
+
+        if (_unitsWaitingList.Count > 0 
+            || _actorSpellUsageSubscriptions.Count > 0)
+        {
+            return;
+        }
+
+        _timelineManager.Resume();
     }
 
     private bool IsGameEnded()
@@ -149,7 +163,7 @@ internal class ActorsManager : MonoBehaviour, IDisposable
         return false;
     }
 
-    private ActorAiBase.OuterWorldInfo GetInfo(Actor actor, double previousCastTime)
+    private ActorAiBase.OuterWorldInfo GetOuterWorldInfo(Actor actor, double previousCastTime)
     {
         if (_playerTeam.ContainsMember(actor))
         {
@@ -174,37 +188,6 @@ internal class ActorsManager : MonoBehaviour, IDisposable
         throw new ArgumentException($"Unknown actor {actor}");
     }
 
-    private void SpawnActor(Actor actor)
-    {
-        var spawnPos = GetSpawnPos(actor);
-        var actorController = _actorsFactory.BuildActorController(spawnPos, _actorControllers);
-        actorController.Setup(actor);
-
-        _occupiedPositions.Add(spawnPos);
-        _actorControllers.Add(actor, actorController);
-    }
-
-    private Vector3 GetSpawnPos(Actor actor)
-    {
-        var posCollection = actor.Side.Value switch
-        {
-            ActorSide.Player => playerTeamPositions,
-            ActorSide.Enemy => enemyTeamPositions,
-            _ => throw ThrowHelper.GetSideException(actor, actor.Side.Value)
-        };
-
-        var positionTransform = posCollection.FirstOrDefault(posTransform => 
-            !_occupiedPositions.Contains(posTransform.position));
-        
-        if (positionTransform == null)
-        {
-            Debug.Log($"Can't find pos to spawn {actor}");
-            return Vector3.zero;
-        }
-
-        return positionTransform.position;
-    }
-
     private void InitSpellCasts()
     {
         const int initCastTime = 0;
@@ -216,7 +199,7 @@ internal class ActorsManager : MonoBehaviour, IDisposable
     {
         foreach (var caster in castersTeam.Actors)
         {
-            _unitsWaitingList.Enqueue((caster, castTime));
+            AddToCastQueue(caster, castTime);
         }
     }
     
@@ -227,7 +210,5 @@ internal class ActorsManager : MonoBehaviour, IDisposable
         {
             disposable.Dispose();
         }
-
-        _actorControllers?.Dispose();
     }
 }

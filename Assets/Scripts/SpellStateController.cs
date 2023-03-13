@@ -29,7 +29,7 @@ internal class SpellStateController : UIBehaviour, IDisposable
         }
 
         _initCastSpellTime = castInfo.InitialCastTime;
-        _mainCastSpellTime = _initCastSpellTime + spell.Config.Duration;
+        _mainCastSpellTime = _initCastSpellTime + spell.BaseConfig.Duration;
     }
 
     private void Update()

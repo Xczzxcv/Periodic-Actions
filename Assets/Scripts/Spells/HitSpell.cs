@@ -7,7 +7,7 @@ internal class HitSpell : SpellBase<HitSpellConfig>
     public override bool IsTargeted => true;
     protected override bool DamagePiercesArmor => false;
 
-    public HitSpell(HitSpellConfig spellConfig) : base(spellConfig)
+    public HitSpell(HitSpellConfig config) : base(config)
     { }
 }
 }

@@ -15,4 +15,7 @@ internal readonly struct DamageInfo
         PierceArmor = pierceArmor;
         ReturnedDamage = returnedDamage;
     }
+
+    public override string ToString() => $"[DMG_INF] Src: {DamageSource}, Am: {DamageAmount}, " +
+                                         $"PA: {PierceArmor}, RD: {ReturnedDamage}";
 }

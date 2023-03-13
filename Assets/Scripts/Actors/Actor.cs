@@ -73,12 +73,17 @@ internal class Actor : IDisposable
         IsDead.Subscribe(isDead => Debug.Log($"[{_timelineManager.CurrentTime}] {this}) {nameof(isDead)} updated: {isDead}"));
     }
 
-    public bool CanCastSpells()
+    public bool CanStartSpellCast()
     {
-        return !IsDead.Value && _castingSpell.Value.Spell == null;
+        return IsAlive && _castingSpell.Value.Spell == null;
     }
 
-    public SpellCastResult CastSpell(ActorSpellCastChoice spellCastChoice)
+    public bool CanMainCastSpell()
+    {
+        return IsAlive;
+    }
+
+    public void CastSpell(ActorSpellCastChoice spellCastChoice)
     {
         Debug.Assert(spellCastChoice.CastInfo.Caster == this);
         Debug.Assert(_spells.ContainsKey(spellCastChoice.SpellId));
@@ -87,12 +92,11 @@ internal class Actor : IDisposable
 
         if (!_spells.TryGetValue(spellCastChoice.SpellId, out var spell))
         {
-            return SpellCastResult.Fail;
+            return;
         }
 
         _timelineManager.AddSpellCastRequest(spell, spellCastChoice.CastInfo);
         _castingSpell.Value = (spell, spellCastChoice.CastInfo);
-        return SpellCastResult.Success;
     }
 
     public void ProcessCastingEnded()
@@ -107,21 +111,18 @@ internal class Actor : IDisposable
 
     public void ApplyDamage(DamageInfo damageInfo)
     {
+        Debug.Assert(damageInfo.DamageAmount >= 0);
         if (damageInfo.DamageAmount == 0)
         {
             return;
         }
-        
+
         var piercedDamageAmount = damageInfo.PierceArmor
             ? damageInfo.DamageAmount
             : Math.Max(0, damageInfo.DamageAmount - _armor.Value);
 
         _hp.SetValueAndForceNotify(_hp.Value - piercedDamageAmount);
-        var damageEventInfo = new DamageEventInfo(
-            new DamageInfo(damageInfo.DamageSource, piercedDamageAmount, damageInfo.PierceArmor,
-                damageInfo.ReturnedDamage),
-            this
-        );
+        var damageEventInfo = new DamageEventInfo(this, damageInfo, piercedDamageAmount);
         MessageBroker.Default.Publish(damageEventInfo);
     }
 

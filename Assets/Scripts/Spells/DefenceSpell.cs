@@ -7,7 +7,7 @@ internal class DefenceSpell : SpellBase<DefenceSpellConfig>
     public override bool IsTargeted => false;
     protected override bool DamagePiercesArmor => false;
 
-    public DefenceSpell(DefenceSpellConfig spellConfig) : base(spellConfig)
+    public DefenceSpell(DefenceSpellConfig config) : base(config)
     { }
 }
 }

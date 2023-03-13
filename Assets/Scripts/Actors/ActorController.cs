@@ -4,7 +4,6 @@ using Spells;
 using UI;
 using UniRx;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Actors
 {
@@ -14,6 +13,13 @@ internal class ActorController : MonoBehaviour, IDisposable
     [SerializeField] private SpellChoiceController spellChoicePrefab;
     [SerializeField] private RectTransform spellChoiceParent;
 
+    internal enum SpellCastResult
+    {
+        None,
+        SpellCasted,
+        SpellInProcessOfCasting
+    }
+    
     private Actor _actor;
     private ActorAiBase.OuterWorldInfo _outerWorldInfo;
     private SpellChoiceController _spellChoiceController;
@@ -30,21 +36,21 @@ internal class ActorController : MonoBehaviour, IDisposable
         view.Setup(_actor);
     }
 
-    public void CastSpell(ActorAiBase.OuterWorldInfo outerWorldInfo)
+    public SpellCastResult CastSpell(ActorAiBase.OuterWorldInfo outerWorldInfo)
     {
-        Debug.Assert(_actor.CanCastSpells());
+        Debug.Assert(_actor.CanStartSpellCast());
 
         _outerWorldInfo = outerWorldInfo;
 
         if (_actor.IsPlayerUnit)
         {
             ShowSpellsToCast();
+            return SpellCastResult.SpellInProcessOfCasting;
         }
-        else
-        {
-            var spellCastChoice = _actor.GetAiSpellChoice(_outerWorldInfo);
-            CastSpellInternal(_actor, spellCastChoice);
-        }
+
+        var spellCastChoice = _actor.GetAiSpellChoice(_outerWorldInfo);
+        CastSpellInternal(_actor, spellCastChoice);
+        return SpellCastResult.SpellCasted;
     }
 
     private static void CastSpellInternal(Actor actor, ActorSpellCastChoice spellChoice)
