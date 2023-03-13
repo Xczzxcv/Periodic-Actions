@@ -28,6 +28,7 @@ internal class SpellsFactory : MonoBehaviour
             DefenceSpellConfig defenceSpellConfig => new DefenceSpell(defenceSpellConfig),
             PierceArmorHitSpellConfig pierceArmorHitSpellConfig => new PierceArmorHitSpell(pierceArmorHitSpellConfig),
             ReturnDamageSpellConfig returnDamageSpellConfig => new ReturnDamageSpell(returnDamageSpellConfig),
+            HealSpellConfig healSpellConfig => new HealSpell(healSpellConfig),
             _ => throw new ArgumentException($"Unknown spell config type '{spellConfig.Id}'")
         };
     }

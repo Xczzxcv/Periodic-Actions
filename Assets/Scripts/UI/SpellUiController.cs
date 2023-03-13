@@ -17,19 +17,9 @@ internal class SpellUiController : MonoBehaviour
         
         view.Setup(new SpellView.Config
         {
-            SpellName = spell?.Config.Id,
-            SpellProperties = GetSpellProperties(spell)
+            SpellName = spell?.BaseConfig.Id,
+            SpellProperties = spell?.GetProperties()
         });
-    }
-
-    private static Dictionary<string, object> GetSpellProperties(ISpell spell)
-    {
-        return new Dictionary<string, object>
-        {
-            {"damage", spell?.Config.Damage},
-            {"armor", spell?.Config.Armor},
-            {"duration", spell?.Config.Duration},
-        };
     }
 }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Spells;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,8 +13,8 @@ internal class SpellView : UIBehaviour
     
     internal struct Config
     {
-        public string SpellName;
-        public Dictionary<string, object> SpellProperties;
+        [CanBeNull] public string SpellName;
+        [CanBeNull] public Dictionary<string, object> SpellProperties;
     }
 
     private Config _config;
@@ -29,8 +29,14 @@ internal class SpellView : UIBehaviour
 
     private void SetupName(string spellName) => nameText.text = spellName;
     
-    private void SetupProperties(Dictionary<string, object> spellProperties)
+    private void SetupProperties([CanBeNull] Dictionary<string, object> spellProperties)
     {
+        if (spellProperties == null)
+        {
+            propertiesText.text = string.Empty;
+            return;
+        }
+
         var resultPropertiesText = "Properties:\n";
         foreach (var (key, value) in spellProperties)
         {

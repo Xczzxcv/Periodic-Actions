@@ -39,6 +39,16 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
 
     public override string ToString() => $"Spell ({Config.Id})";
 
+    public virtual Dictionary<string, object> GetProperties()
+    {
+        return new Dictionary<string, object>
+        {
+            {"damage", Config.Damage},
+            {"armor", Config.Armor},
+            {"duration", Config.Duration},
+        };
+    }
+
     public virtual void Dispose()
     { }
 }

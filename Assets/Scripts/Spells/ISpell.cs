@@ -1,4 +1,5 @@
-﻿using SpellConfigs;
+﻿using System.Collections.Generic;
+using SpellConfigs;
 
 namespace Spells
 {
@@ -11,5 +12,6 @@ internal interface ISpell
     public void PostCast(SpellCastInfo castInfo);
     public void MainCast(SpellCastInfo castInfo);
     public void Dispose();
+    Dictionary<string, object> GetProperties();
 }
 }

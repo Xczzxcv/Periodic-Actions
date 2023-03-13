@@ -126,6 +126,17 @@ internal class Actor : IDisposable
         MessageBroker.Default.Publish(damageEventInfo);
     }
 
+    public void Heal(float amount)
+    {
+        Debug.Assert(amount >= 0);
+        if (amount == 0)
+        {
+            return;
+        }
+
+        _hp.SetValueAndForceNotify(_hp.Value + amount);
+    }
+
     public void ChangeArmor(float shiftAmount)
     {
         _armor.Value += shiftAmount;

@@ -13,6 +13,10 @@ internal class RandomActorAi : ActorAiBase
     public override ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo)
     {
         var targetTeam = outerInfo.EnemyTeam;
+        return new ActorSpellCastChoice(
+            "default_heal",
+            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, targetTeam.Actors.First())
+        );
 
         if (targetTeam.Actors.All(actor => !actor.CanBeTargeted()))
         {
