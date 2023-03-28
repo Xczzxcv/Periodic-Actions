@@ -856,6 +856,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8264e8fb6cd064089dd1577bef45c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minGameSpeed: 0.0625
+  maxGameSpeed: Infinity
 --- !u!114 &1666255770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,6 +932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3ecf57773bfd24ea23ff8fa1ff59fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actorsSpawnManager: {fileID: 197622819}
   playerTeamConfigs:
   - Name: actor1
     Hp: 10
@@ -980,7 +983,6 @@ MonoBehaviour:
     Side: 2
     AiConfig: 
     SpellIds: []
-  actorsSpawnManager: {fileID: 197622819}
 --- !u!4 &1781958170
 Transform:
   m_ObjectHideFlags: 0

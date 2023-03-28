@@ -3,11 +3,11 @@
 internal readonly struct DamageInfo
 {
     public readonly Actor DamageSource;
-    public readonly float DamageAmount;
+    public readonly double DamageAmount;
     public readonly bool PierceArmor;
     public readonly bool ReturnedDamage;
 
-    public DamageInfo(Actor damageSource, float damageAmount, bool pierceArmor,
+    public DamageInfo(Actor damageSource, double damageAmount, bool pierceArmor,
         bool returnedDamage)
     {
         DamageSource = damageSource;

@@ -4,9 +4,9 @@ internal readonly struct DamageEventInfo
 {
     public readonly Actor DamageTarget;
     public readonly DamageInfo DamageInfo;
-    public readonly float DealtDamageAmount;
+    public readonly double DealtDamageAmount;
 
-    public DamageEventInfo(Actor damageTarget, DamageInfo damageInfo, float dealtDamageAmount)
+    public DamageEventInfo(Actor damageTarget, DamageInfo damageInfo, double dealtDamageAmount)
     {
         DamageTarget = damageTarget;
         DamageInfo = damageInfo;

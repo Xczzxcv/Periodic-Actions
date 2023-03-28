@@ -19,7 +19,10 @@ internal class BattleUiController : UIBehaviour
 
     private void Update()
     {
-        timeText.text = _timeManager.CurrentTime.Value.ToString("F1", CultureInfo.InvariantCulture);
-        gameSpeedText.text = $"{_timeManager.GameSpeed.Value}";
+        timeText.text = TextHelper.Format(_timeManager.CurrentTime.Value);
+        var gameSpeedView = _timeManager.GameSpeed.Value >= 1
+            ? _timeManager.GameSpeed.Value.ToString(CultureInfo.InvariantCulture)
+            : $"1/{(1 / _timeManager.GameSpeed.Value).ToString(CultureInfo.InvariantCulture)}";
+        gameSpeedText.text = $"X{gameSpeedView}";
     }
 }

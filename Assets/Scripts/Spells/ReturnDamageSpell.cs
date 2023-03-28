@@ -8,7 +8,8 @@ namespace Spells
 internal class ReturnDamageSpell : SpellBase<ReturnDamageSpellConfig>
 {
     public override bool IsTargeted => false;
-    protected override bool DamagePiercesArmor => false;
+    public override bool DamagePiercesArmor => false;
+    public override bool CastedOnAllies => false;
 
     private IDisposable _subscription;
     
@@ -17,7 +18,7 @@ internal class ReturnDamageSpell : SpellBase<ReturnDamageSpellConfig>
 
     public override void InitialCast(SpellCastInfo castInfo)
     {
-        Debug.Assert(_subscription == null);
+        Debug.Assert(_subscription == null, $"Subscription is not null {_subscription}");
 
         _subscription = MessageBroker.Default.Receive<DamageEventInfo>().Subscribe(damageEvent =>
         {

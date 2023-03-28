@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Actors;
 using SpellConfigs;
+using UnityEngine;
 
 namespace Spells
 {
@@ -9,7 +11,8 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
     public string Id => Config.Id;
     public SpellConfigBase BaseConfig => Config;
     public abstract bool IsTargeted { get; }
-    protected abstract bool DamagePiercesArmor { get; }
+    public abstract bool DamagePiercesArmor { get; }
+    public abstract bool CastedOnAllies { get; }
 
     protected readonly TSpellConfig Config;
 
@@ -20,6 +23,11 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
 
     public virtual void InitialCast(SpellCastInfo castInfo)
     {
+        Debug.Assert(!IsTargeted || CastedOnAllies == Actor.IsAllies(castInfo.Caster, castInfo.Target),
+            $"Wrong target side for '{Id}': {castInfo}");
+        Debug.Assert(IsTargeted == (castInfo.Target != null), 
+            $"Wrong target value for {Id}: {castInfo} != {IsTargeted}");
+        
         castInfo.Caster.ChangeArmor(Config.Armor);
     }
 
@@ -43,9 +51,9 @@ internal abstract class SpellBase<TSpellConfig> : ISpell
     {
         return new Dictionary<string, object>
         {
-            {"damage", Config.Damage},
-            {"armor", Config.Armor},
-            {"duration", Config.Duration},
+            {Constants.SpellProperties.DAMAGE, Config.Damage},
+            {Constants.SpellProperties.ARMOR, Config.Armor},
+            {Constants.SpellProperties.DELAY, Config.Delay},
         };
     }
 

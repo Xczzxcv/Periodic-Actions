@@ -4,6 +4,9 @@ using Zenject;
 
 internal class GameManager : MonoBehaviour
 {
+    [SerializeField] private double minGameSpeed;
+    [SerializeField] private double maxGameSpeed;
+
     private TimeManager _timeManager;
     private TimelineManager _timelineManager;
 
@@ -29,11 +32,17 @@ internal class GameManager : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value / 2, 5));
+            if (_timeManager.GameSpeed.Value > minGameSpeed)
+            {
+                _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value / 2, 5));
+            }
         }
         else if (Input.GetKeyUp(KeyCode.Alpha2))
         {
-            _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value * 2, 5));
+            if (_timeManager.GameSpeed.Value < maxGameSpeed)
+            {
+                _timeManager.SetGameSpeed(Math.Round(_timeManager.GameSpeed.Value * 2, 5));
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Actors.Ai;
+using JetBrains.Annotations;
 using Spells;
 using UI;
 using UniRx;
@@ -23,7 +24,7 @@ internal class ActorController : MonoBehaviour, IDisposable
     private Actor _actor;
     private ActorAiBase.OuterWorldInfo _outerWorldInfo;
     private SpellChoiceController _spellChoiceController;
-    private Actor _chosenEnemyActor;
+    private ISpell _chosenSpell;
 
     public void Init(ActorControllersCollection actorControllers)
     {
@@ -38,7 +39,7 @@ internal class ActorController : MonoBehaviour, IDisposable
 
     public SpellCastResult CastSpell(ActorAiBase.OuterWorldInfo outerWorldInfo)
     {
-        Debug.Assert(_actor.CanStartSpellCast());
+        Debug.Assert(_actor.Spells.CanStartSpellCast(), $"{_actor} can't start cast spell");
 
         _outerWorldInfo = outerWorldInfo;
 
@@ -55,13 +56,32 @@ internal class ActorController : MonoBehaviour, IDisposable
 
     private static void CastSpellInternal(Actor actor, ActorSpellCastChoice spellChoice)
     {
-        actor.CastSpell(spellChoice);
+        actor.Spells.CastSpell(spellChoice);
+    }
+
+    private void CastPlayerActorSpell([CanBeNull] Actor targetActor)
+    {
+        var spellCastInfo = new SpellCastInfo(
+            _outerWorldInfo.PreviousCastTime,
+            _actor,
+            targetActor
+        );
+        var spellCastChoice = new ActorSpellCastChoice(
+            _chosenSpell.Id,
+            spellCastInfo
+        );
+
+        view.SetHighlighted(false);
+        CastSpellInternal(_actor, spellCastChoice);
+
+        Destroy(_spellChoiceController.gameObject);
+        _spellChoiceController = null;
     }
 
     private void ShowSpellsToCast()
     {
         _spellChoiceController = Instantiate(spellChoicePrefab, spellChoiceParent);
-        _spellChoiceController.Setup(_actor.Spells.Values);
+        _spellChoiceController.Setup(_actor.Spells.Spells.Values);
         _spellChoiceController.ChosenSpell.Subscribe(OnNextSpellChosen);
         view.SetHighlighted(true);
     }
@@ -72,42 +92,43 @@ internal class ActorController : MonoBehaviour, IDisposable
         {
             return;
         }
+        
+        if (_chosenSpell == null)
+        {
+            return;
+        }
+
+        if (!_chosenSpell.IsTargeted)
+        {
+            return;
+        }
 
         var buttonStartPoint = new Vector2(15, 100);
         var buttonSize = new Vector2(200, 70);
-        for (var i = 0; i < _outerWorldInfo.EnemyTeam.Actors.Count; i++)
+        var possibleTargets = _chosenSpell.CastedOnAllies
+            ? _outerWorldInfo.AllyTeam.Actors
+            : _outerWorldInfo.EnemyTeam.Actors;
+        for (var i = 0; i < possibleTargets.Count; i++)
         {
-            var enemyActor = _outerWorldInfo.EnemyTeam.Actors[i];
+            var targetActor = possibleTargets[i];
             var buttonPos = new Vector2(buttonStartPoint.x, buttonStartPoint.y + buttonSize.y * i);
-            if (GUI.Button(new Rect(buttonPos, buttonSize), enemyActor.Name))
+            if (!GUI.Button(new Rect(buttonPos, buttonSize), targetActor.Name))
             {
-                _chosenEnemyActor = enemyActor;
+                continue;
             }
+            
+            CastPlayerActorSpell(targetActor);
         }
     }
 
     private void OnNextSpellChosen(ISpell spell)
     {
-        if (spell.IsTargeted && _chosenEnemyActor == null)
+        _chosenSpell = spell;
+
+        if (!spell.IsTargeted)
         {
-            Debug.LogError($"You need to choose target to cast {spell}");
-            return;
+            CastPlayerActorSpell(null);
         }
-
-        var spellCastInfo = new SpellCastInfo(
-            _outerWorldInfo.PreviousCastTime,
-            _actor,
-            _chosenEnemyActor
-        );
-        var spellCastChoice = new ActorSpellCastChoice(
-            spell.Id,
-            spellCastInfo
-        );
-
-        view.SetHighlighted(false);
-        Destroy(_spellChoiceController.gameObject);
-        _spellChoiceController = null;
-        CastSpellInternal(_actor, spellCastChoice);
     }
 
     public void Dispose()

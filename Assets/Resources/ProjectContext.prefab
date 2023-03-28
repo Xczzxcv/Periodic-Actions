@@ -173,7 +173,8 @@ MonoBehaviour:
   - rid: 7782182896801677314
   - rid: 7782182896801677315
   - rid: 7782182985361784833
-  - rid: 7782183080660041728
+  - rid: 7782183100750495745
+  - rid: 7782183100750495746
   references:
     version: 2
     RefIds:
@@ -187,14 +188,14 @@ MonoBehaviour:
     - rid: 7782182896801677313
       type: {class: DefenceSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
       data:
-        Id: default_defence
+        Id: defence
         Damage: 0
         Armor: 10
         Duration: 10
     - rid: 7782182896801677314
       type: {class: PierceArmorHitSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
       data:
-        Id: default_pierce_armor_hit
+        Id: pierce_armor_hit
         Damage: 3
         Armor: 3
         Duration: 6
@@ -208,15 +209,23 @@ MonoBehaviour:
     - rid: 7782182985361784833
       type: {class: ReturnDamageSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
       data:
-        Id: default_return_damage
+        Id: return_damage
         Damage: 0
         Armor: 5
         Duration: 10
-    - rid: 7782183080660041728
-      type: {class: HealSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
+    - rid: 7782183100750495745
+      type: {class: HealSelfSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
       data:
-        Id: default_heal
+        Id: heal_self
         Damage: 0
-        Armor: 1
+        Armor: 2
+        Duration: 4
+        HealAmount: 4
+    - rid: 7782183100750495746
+      type: {class: HealAllySpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
+      data:
+        Id: heal_ally
+        Damage: 0
+        Armor: 2
         Duration: 5
         HealAmount: 3

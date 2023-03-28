@@ -3,7 +3,7 @@
 namespace SpellConfigs
 {
 [Serializable]
-public class HealSpellConfig : SpellConfigBase
+public class HealSelfSpellConfig : SpellConfigBase
 {
     public int HealAmount;
 }

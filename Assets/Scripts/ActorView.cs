@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Actors;
 using DG.Tweening;
 using Spells;
@@ -54,18 +55,22 @@ internal class ActorView : MonoBehaviour, IDisposable
 
     private void Subscribe(Actor actor)
     {
-        actor.Hp.Subscribe(SetupHp).AddTo(_disposables);
-        actor.Armor.Subscribe(SetupArmor).AddTo(_disposables);
-        actor.CastingSpell.Subscribe(SetupCastingSpell).AddTo(_disposables);
+        Observable.CombineLatest(actor.Stats.Hp, actor.Stats.MaxHp).Subscribe(SetupHp).AddTo(_disposables);
+        actor.Stats.Armor.Subscribe(SetupArmor).AddTo(_disposables);
+        actor.Spells.CastingSpell.Subscribe(SetupCastingSpell).AddTo(_disposables);
         actor.IsDead.Subscribe(SetupIsDead).AddTo(_disposables);
         actor.Side.Subscribe(SetupSide).AddTo(_disposables);
     }
 
     private void SetupName(string value) => nameText.text = value;
 
-    private void SetupHp(float value) => hpText.text = $"{value}";
-    
-    private void SetupArmor(float value) => armorText.text = $"{value}";
+    private void SetupHp(IList<double> hpValues)
+    {
+        var (currentHp, maxHp) = (hpValues[0], hpValues[1]);
+        hpText.text = $"{currentHp}/{maxHp}";
+    }
+
+    private void SetupArmor(double value) => armorText.text = $"{value}";
     
     private void SetupCastingSpell((ISpell Spell, SpellCastInfo Castinfo) value)
     {
@@ -89,7 +94,7 @@ internal class ActorView : MonoBehaviour, IDisposable
     {
         pointerController.Setup(actor);
 
-        actor.CastingSpell.Subscribe(CastingSpellHandler).AddTo(_disposables);
+        actor.Spells.CastingSpell.Subscribe(CastingSpellHandler).AddTo(_disposables);
     }
 
     private void CastingSpellHandler((ISpell Spell, SpellCastInfo CastInfo) value)

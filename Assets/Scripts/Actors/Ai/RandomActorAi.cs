@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using Spells;
 using Random = UnityEngine.Random;
 
@@ -12,15 +13,18 @@ internal class RandomActorAi : ActorAiBase
 
     public override ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo)
     {
-        var targetTeam = outerInfo.EnemyTeam;
-        return new ActorSpellCastChoice(
-            "default_heal",
-            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, targetTeam.Actors.First())
-        );
+        var randomSpell = Actor.Spells.GetRandomSpell();
+        if (!randomSpell.IsTargeted)
+        {
+            return CastSpellInternal(outerInfo, randomSpell.Id, null);
+        }
 
+        var targetTeam = randomSpell.CastedOnAllies
+            ? outerInfo.AllyTeam
+            : outerInfo.EnemyTeam;
         if (targetTeam.Actors.All(actor => !actor.CanBeTargeted()))
         {
-            var notTargetedSpells = Actor.Spells.Values.Where(spell => !spell.IsTargeted);
+            var notTargetedSpells = Actor.Spells.Spells.Values.Where(spell => !spell.IsTargeted);
             if (notTargetedSpells.Any())
             {
                 return new ActorSpellCastChoice(
@@ -32,15 +36,28 @@ internal class RandomActorAi : ActorAiBase
             throw new ArgumentException($"Can't find spell and target for {Actor} ");
         }
 
-        Actor randomEnemyActor;
+        Actor randomTargetActor;
         do
         {
-            randomEnemyActor = targetTeam.Actors[Random.Range(0, targetTeam.Actors.Count)];
-        } while (!randomEnemyActor.CanBeTargeted());
+            randomTargetActor = targetTeam.Actors[Random.Range(0, targetTeam.Actors.Count)];
+        } while (!randomTargetActor.CanBeTargeted());
+
+        var spellTarget = randomSpell.IsTargeted
+            ? randomTargetActor
+            : null;
 
         return new ActorSpellCastChoice(
-            Actor.GetRandomSpellId(),
-            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, randomEnemyActor)
+            randomSpell.Id,
+            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, spellTarget)
+        );
+    }
+
+    private ActorSpellCastChoice CastSpellInternal(OuterWorldInfo outerInfo, string spellId,
+        [CanBeNull] Actor target)
+    {
+        return new ActorSpellCastChoice(
+            spellId,
+            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, target)
         );
     }
 }

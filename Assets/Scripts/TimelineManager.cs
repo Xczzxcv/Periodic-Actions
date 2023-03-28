@@ -37,7 +37,7 @@ internal class TimelineManager
     public void AddSpellCastRequest(ISpell spell, SpellCastInfo castInfo)
     {
         InitialCastSpell(spell, castInfo);
-        var castTime = castInfo.InitialCastTime + spell.BaseConfig.Duration;
+        var castTime = castInfo.InitialCastTime + spell.BaseConfig.Delay;
         _spellsToCast.Add(new DeferredSpellCastInfo
         (
             castTime,
@@ -68,7 +68,7 @@ internal class TimelineManager
 
         _spellsToCast.RemoveAt(_spellsToCast.Count - 1);
 
-        if (!deferredCastInfo.CastInfo.Caster.CanMainCastSpell())
+        if (!deferredCastInfo.CastInfo.Caster.Spells.CanMainCastSpell())
         {
             PostCastSpell(deferredCastInfo);
             return UpdateResult.SpellProcessedButFailedToBeCasted;
@@ -100,7 +100,7 @@ internal class TimelineManager
         Debug.Log($"[{CurrentTime}] {deferredCastInfo.Spell} being POST casted " +
                   $"by {deferredCastInfo.CastInfo.Caster} on {deferredCastInfo.CastInfo.Target}");
         deferredCastInfo.Spell.PostCast(deferredCastInfo.CastInfo);
-        deferredCastInfo.CastInfo.Caster.ProcessCastingEnded();
+        deferredCastInfo.CastInfo.Caster.Spells.ProcessCastingEnded();
         _postCastedSpellInfo.Value = deferredCastInfo;
     }
 

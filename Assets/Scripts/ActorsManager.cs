@@ -94,7 +94,7 @@ internal class ActorsManager : MonoBehaviour, IDisposable
 
     private ActorController.SpellCastResult ProcessNewSpellCast(Actor caster, double previousCastTime)
     {
-        if (!caster.CanStartSpellCast())
+        if (!caster.Spells.CanStartSpellCast())
         {
             return ActorController.SpellCastResult.None;
         }

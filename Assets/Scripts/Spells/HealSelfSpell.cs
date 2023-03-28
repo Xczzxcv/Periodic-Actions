@@ -3,12 +3,13 @@ using SpellConfigs;
 
 namespace Spells
 {
-internal class HealSpell : SpellBase<HealSpellConfig>
+internal class HealSelfSpell : SpellBase<HealSelfSpellConfig>
 {
-    public override bool IsTargeted => true;
-    protected override bool DamagePiercesArmor => false;
+    public override bool IsTargeted => false;
+    public override bool DamagePiercesArmor => false;
+    public override bool CastedOnAllies => false;
 
-    public HealSpell(HealSpellConfig config) : base(config)
+    public HealSelfSpell(HealSelfSpellConfig config) : base(config)
     { }
 
     public override void MainCast(SpellCastInfo castInfo)
@@ -20,7 +21,7 @@ internal class HealSpell : SpellBase<HealSpellConfig>
     public override Dictionary<string, object> GetProperties()
     {
         var properties = base.GetProperties();
-        properties.Add("heal", Config.HealAmount);
+        properties.Add(Constants.SpellProperties.HEAL, Config.HealAmount);
 
         return properties;
     }
