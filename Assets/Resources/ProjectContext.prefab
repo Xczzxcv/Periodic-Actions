@@ -168,64 +168,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spellConfigs:
-  - rid: 7782182896801677312
-  - rid: 7782182896801677313
-  - rid: 7782182896801677314
-  - rid: 7782182896801677315
-  - rid: 7782182985361784833
-  - rid: 7782183100750495745
-  - rid: 7782183100750495746
-  references:
-    version: 2
-    RefIds:
-    - rid: 7782182896801677312
-      type: {class: HitSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: fast_hit
-        Damage: 7
-        Armor: 2
-        Duration: 5
-    - rid: 7782182896801677313
-      type: {class: DefenceSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: defence
-        Damage: 0
-        Armor: 10
-        Duration: 10
-    - rid: 7782182896801677314
-      type: {class: PierceArmorHitSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: pierce_armor_hit
-        Damage: 3
-        Armor: 3
-        Duration: 6
-    - rid: 7782182896801677315
-      type: {class: HitSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: slow_hit
-        Damage: 15
-        Armor: 5
-        Duration: 12
-    - rid: 7782182985361784833
-      type: {class: ReturnDamageSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: return_damage
-        Damage: 0
-        Armor: 5
-        Duration: 10
-    - rid: 7782183100750495745
-      type: {class: HealSelfSpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: heal_self
-        Damage: 0
-        Armor: 2
-        Duration: 4
-        HealAmount: 4
-    - rid: 7782183100750495746
-      type: {class: HealAllySpellConfig, ns: SpellConfigs, asm: Assembly-CSharp}
-      data:
-        Id: heal_ally
-        Damage: 0
-        Armor: 2
-        Duration: 5
-        HealAmount: 3
+  - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
+  - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
+  - {fileID: 11400000, guid: 32a531785d100f84393eb6ea9f5d49bf, type: 2}
+  - {fileID: 11400000, guid: dd888e58d0cad3f4f9e72fdbe129953f, type: 2}
+  - {fileID: 11400000, guid: 2c4aa68bb5a346e43905dd5c959709b3, type: 2}
+  - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
+  - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
+  - {fileID: 11400000, guid: 6777b82908796ed4caef6ad30a475761, type: 2}
+  - {fileID: 11400000, guid: 0de9ea12d608d9b4da2196e1da2a2a69, type: 2}
+  configsFolder:
+    dataType: 0
+    name: 
+    path: Configs/Spells
+    tooltip: 
+    iconType: 0
+    largeIcon: {fileID: 0}
+    smallIcon: {fileID: 0}
+    iconName: 

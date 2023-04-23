@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef4e30338ab4826b28225bb4e403c7d, type: 3}
+  m_Name: damage_buff
+  m_EditorClassIdentifier: 
+  Id: damage_buff
+  Stats:
+    rid: 139045418227466243
+  references:
+    version: 2
+    RefIds:
+    - rid: 139045418227466243
+      type: {class: ItemStatsShiftConfig, ns: Actors.Stats, asm: Assembly-CSharp}
+      data:
+        Shifts:
+          pairs:
+          - key: 4
+            value: 3
+          - key: 6
+            value: -1
+          error: 0
