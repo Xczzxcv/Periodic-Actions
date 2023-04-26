@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Actors;
@@ -51,14 +50,5 @@ internal class SpellsFactory : MonoBehaviour, ISpellsFactory
         spellConfigs = configs;
         EditorUtility.SetDirty(this);
     }
-
-    #region Debug
-
-    public SpellConfig[] GetAllSpellConfigs()
-    {
-        return _spellConfigsCollection.Values.ToArray();
-    }
-
-    #endregion
 }
 }

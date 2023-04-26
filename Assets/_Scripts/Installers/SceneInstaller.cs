@@ -7,15 +7,11 @@ namespace Installers
 public class SceneInstaller : MonoInstaller
 {
     [SerializeField] private PlayerInventoryController playerInventoryController;
-    [SerializeField] private BattleUiController battleUiControllerPrefab;
-    [SerializeField] private RectTransform uiRoot;
 
     public override void InstallBindings()
     {
         BindTimelineManager();
         BindPlayerInventory();
-
-        InstantiateBattleUiController();
     }
 
     private void BindTimelineManager()
@@ -26,11 +22,6 @@ public class SceneInstaller : MonoInstaller
     private void BindPlayerInventory()
     {
         Container.BindInstance(playerInventoryController.GetInventory()).AsSingle();
-    }
-
-    private void InstantiateBattleUiController()
-    {
-        Container.InstantiatePrefab(battleUiControllerPrefab, uiRoot);
     }
 }
 }

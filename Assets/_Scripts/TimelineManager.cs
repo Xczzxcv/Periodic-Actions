@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Spells;
 using UniRx;
@@ -29,6 +30,8 @@ internal class TimelineManager
     private readonly List<DeferredSpellCastInfo> _spellsToCast = new ();
     private readonly TimeManager _timeManager;
 
+    private double _lastMainCastedPlayerSpellTime = double.NegativeInfinity;
+
     public TimelineManager(TimeManager timeManager)
     {
         _timeManager = timeManager;
@@ -48,8 +51,9 @@ internal class TimelineManager
         _spellsToCast.Sort(DeferredSpellCastInfo.TimeComparison);
     }
 
-    public UpdateResult Update()
+    public UpdateResult Update(out DeferredSpellCastInfo deferredCastInfo)
     {
+        deferredCastInfo = default;
         if (IsPaused)
         {
             return UpdateResult.NoSpellsProcessed;
@@ -60,10 +64,19 @@ internal class TimelineManager
             return UpdateResult.NoSpellsProcessed;
         }
 
-        var deferredCastInfo = _spellsToCast.Last();
+        deferredCastInfo = _spellsToCast.Last();
         if (_timeManager.CurrentTime.Value < deferredCastInfo.CastTime)
         {
             return UpdateResult.NoSpellsProcessed;
+        }
+
+        switch (deferredCastInfo.IsOrderFromPlayer)
+        {
+            case true:
+                _lastMainCastedPlayerSpellTime = CurrentTime;
+                break;
+            case false when _lastMainCastedPlayerSpellTime == CurrentTime:
+                return UpdateResult.NoSpellsProcessed;
         }
 
         _spellsToCast.RemoveAt(_spellsToCast.Count - 1);

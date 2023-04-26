@@ -6,6 +6,7 @@ internal class GameUpdater : MonoBehaviour
 {
     [SerializeField] private double minGameSpeed;
     [SerializeField] private double maxGameSpeed;
+    [SerializeField] private ActorsManager actorsManager;
 
     private TimeManager _timeManager;
     private TimelineManager _timelineManager;
@@ -21,9 +22,12 @@ internal class GameUpdater : MonoBehaviour
     {
         _timeManager.Update();
 
-        while (!_timelineManager.IsPaused 
-               && _timelineManager.Update() == TimelineManager.UpdateResult.SpellProcessedAndCasted)
+        while (!_timelineManager.IsPaused
+               && _timelineManager.Update(out var deferredCastInfo) ==
+               TimelineManager.UpdateResult.SpellProcessedAndCasted)
         { }
+
+        actorsManager.OnUpdate();
 
         UpdateGameSpeed();
     }
