@@ -2,6 +2,13 @@
 {
 internal interface IActorAi
 {
-    public abstract ActorSpellCastChoice ChooseSpell(ActorAiBase.OuterWorldInfo outerInfo);
+    internal struct OuterWorldInfo
+    {
+        public ActorsTeam AllyTeam;
+        public ActorsTeam EnemyTeam;
+        public double PreviousCastTime;
+    }
+    
+    public abstract ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo);
 }
 }

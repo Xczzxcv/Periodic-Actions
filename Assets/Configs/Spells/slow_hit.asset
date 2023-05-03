@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slow_hit
   m_EditorClassIdentifier: 
   Id: slow_hit
-  Delay: 12
+  Delay: 20
   Aspects:
   - rid: 139045876358184969
   - rid: 139045876358184970
@@ -23,9 +23,9 @@ MonoBehaviour:
     - rid: 139045876358184969
       type: {class: DamageSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        DamageAmount: 10
+        DamageAmount: 40
         IsDamagePiercesArmor: 0
     - rid: 139045876358184970
       type: {class: ArmorSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        ArmorAmount: 3
+        ArmorAmount: 18

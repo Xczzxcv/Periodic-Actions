@@ -10,22 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d93c7ba4fb0147f0b7227162c4e67a41, type: 3}
-  m_Name: pierce_hit
+  m_Name: return_boss
   m_EditorClassIdentifier: 
-  Id: pierce_hit
-  Delay: 15
+  Id: return_boss
+  Delay: 20
   Aspects:
-  - rid: 139045876358184971
-  - rid: 139045876358184972
+  - rid: 139045876358184961
+  - rid: 139045876358184962
   references:
     version: 2
     RefIds:
-    - rid: 139045876358184971
-      type: {class: DamageSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
-      data:
-        DamageAmount: 30
-        IsDamagePiercesArmor: 1
-    - rid: 139045876358184972
+    - rid: 139045876358184961
+      type: {class: ReturnDamageSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
+    - rid: 139045876358184962
       type: {class: ArmorSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        ArmorAmount: 5
+        ArmorAmount: 30

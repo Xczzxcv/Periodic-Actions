@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd86620621e45a992c080ccae5134de, type: 3}
+  m_Name: actor4
+  m_EditorClassIdentifier: 
+  Name: actor4
+  Hp: 100
+  Armor: 0
+  Side: 1
+  AiConfig:
+    rid: -2
+  SpellConfigs:
+  - {fileID: 11400000, guid: 0de9ea12d608d9b4da2196e1da2a2a69, type: 2}
+  - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 3906426353904517124
+      type: {class: RandomSetActorAiConfig, ns: Actors.Ai, asm: Assembly-CSharp}

@@ -23,7 +23,7 @@ internal class ActorsSpawnManager : MonoBehaviour, IDisposable
         _actorsFactory = actorsFactory;
     }
     
-    public Actor SpawnActor(Actor.Config actorConfig)
+    public Actor SpawnActor(ActorConfig actorConfig)
     {
         var actor = _actorsFactory.CreateActor(_timelineManager, actorConfig);
         var spawnPos = GetSpawnPos(actor);

@@ -11,17 +11,6 @@ namespace Actors
 {
 internal class Actor : IDisposable
 {
-    [Serializable]
-    internal struct Config
-    {
-        public string Name;
-        public float Hp;
-        public float Armor;
-        public ActorSide Side;
-        public string AiConfig;
-        public SpellConfig[] SpellConfigs;
-    }
-
     public bool IsPlayerUnit => Side.Value == ActorSide.Player;
     public bool IsAlive => !IsDead.Value;
 
@@ -35,25 +24,31 @@ internal class Actor : IDisposable
     public readonly SpellsActorManager Spells;
     public readonly StatsActorManager Stats;
     public readonly ActorInventory Inventory;
+    private readonly IActorAiFactory _actorAiFactory;
     private IActorAi _ai;
 
     public Actor(TimelineManager timelineManager, 
         ISpellsFactory spellsFactory,
-        IStatsShiftFactory statsShiftFactory)
+        IStatsShiftFactory statsShiftFactory,
+        IActorAiFactory actorAiFactory)
     {
         _timelineManager = timelineManager;
         Spells = new SpellsActorManager(timelineManager, spellsFactory, this);
         Stats = new StatsActorManager(statsShiftFactory, this);
         Inventory = new ActorInventory(this);
+        _actorAiFactory = actorAiFactory;
     }
 
-    public void Init(Config config)
+    public void Init(ActorConfig config)
     {
         Stats.Init(config);
         Spells.Init(config);
         _side = new (config.Side);
         IsDead = Stats.Hp.Select(hp => hp <= 0).ToReactiveProperty();
-        _ai = new RandomActorAi(this);
+        _ai = config.Side == ActorSide.Enemy
+            ? _actorAiFactory.Create(config.AiConfig, this)
+            : new MockActorAi(this);
+
         Name = config.Name;
 
         Stats.Hp.Subscribe(hp => Debug.Log($"[{_timelineManager.CurrentTime}] {this}) {nameof(hp)} updated: {hp}"));
@@ -102,7 +97,7 @@ internal class Actor : IDisposable
 
     public override string ToString() => $"Actor '{Name}'";
 
-    public ActorSpellCastChoice GetAiSpellChoice(ActorAiBase.OuterWorldInfo outerWorldInfo)
+    public ActorSpellCastChoice GetAiSpellChoice(IActorAi.OuterWorldInfo outerWorldInfo)
     {
         return _ai.ChooseSpell(outerWorldInfo);
     }

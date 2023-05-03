@@ -957,75 +957,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actorsSpawnManager: {fileID: 197622819}
   playerTeamConfigs:
-  - Name: actor1
-    Hp: 15
-    Armor: 0
-    Side: 1
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
-    - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
-  - Name: actor2
-    Hp: 15
-    Armor: 0
-    Side: 1
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
-    - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
-  - Name: actor3
-    Hp: 15
-    Armor: 0
-    Side: 1
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
-    - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
-  - Name: actor4
-    Hp: 15
-    Armor: 0
-    Side: 1
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0de9ea12d608d9b4da2196e1da2a2a69, type: 2}
-    - {fileID: 11400000, guid: 697f4b346a444fe458e9ef01bf99090d, type: 2}
+  - {fileID: 11400000, guid: 8febf589fdea2bb46b2f9385ca1785ad, type: 2}
+  - {fileID: 11400000, guid: bf018590450b27a44b9ae0e4c9cdd450, type: 2}
+  - {fileID: 11400000, guid: 0e98a5ab3bae0f64fbcead11722d7f4b, type: 2}
+  - {fileID: 11400000, guid: 54b11ad67da3ed144b755fc9226d38a5, type: 2}
   enemyTeamConfigs:
-  - Name: actor5
-    Hp: 15
-    Armor: 0
-    Side: 2
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
-    - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
-    - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
-  - Name: actor6
-    Hp: 15
-    Armor: 0
-    Side: 2
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
-    - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
-    - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
-  - Name: actor7
-    Hp: 15
-    Armor: 0
-    Side: 2
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
-    - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
-    - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
-  - Name: actor8
-    Hp: 15
-    Armor: 0
-    Side: 2
-    AiConfig: 
-    SpellConfigs:
-    - {fileID: 11400000, guid: 0e698c4900c9d574e8f8fe1c1df0cf43, type: 2}
-    - {fileID: 11400000, guid: 9abfd1dd44a056248a13875936d358bd, type: 2}
-    - {fileID: 11400000, guid: 859dae79ea3cf4b489794990077e7042, type: 2}
+  - {fileID: 11400000, guid: 259d799e4a4488d4c816d63f733b6887, type: 2}
 --- !u!4 &1781958170
 Transform:
   m_ObjectHideFlags: 0

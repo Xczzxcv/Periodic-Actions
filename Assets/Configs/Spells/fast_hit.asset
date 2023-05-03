@@ -23,9 +23,9 @@ MonoBehaviour:
     - rid: 139045371283767296
       type: {class: DamageSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        DamageAmount: 5
+        DamageAmount: 15
         IsDamagePiercesArmor: 0
     - rid: 139045371283767297
       type: {class: ArmorSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        ArmorAmount: 2
+        ArmorAmount: 5

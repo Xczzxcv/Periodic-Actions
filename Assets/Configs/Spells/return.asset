@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: return
   m_EditorClassIdentifier: 
   Id: return
-  Delay: 4
+  Delay: 15
   Aspects:
   - rid: 139045876358184961
   - rid: 139045876358184962
@@ -25,4 +25,4 @@ MonoBehaviour:
     - rid: 139045876358184962
       type: {class: ArmorSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        ArmorAmount: 1
+        ArmorAmount: 20

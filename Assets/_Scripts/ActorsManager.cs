@@ -9,8 +9,8 @@ using Zenject;
 internal partial class ActorsManager : MonoBehaviour, IDisposable
 {
     [SerializeField] private ActorsSpawnManager actorsSpawnManager;
-    [SerializeField] private List<Actor.Config> playerTeamConfigs;
-    [SerializeField] private List<Actor.Config> enemyTeamConfigs;
+    [SerializeField] private List<ActorConfig> playerTeamConfigs;
+    [SerializeField] private List<ActorConfig> enemyTeamConfigs;
 
     private TimelineManager _timelineManager;
     private PlayerInventory _playerInventory;
@@ -40,7 +40,7 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
         InitSpellCasts();
     }
 
-    private ActorsTeam SpawnActorsTeam(List<Actor.Config> configs)
+    private ActorsTeam SpawnActorsTeam(List<ActorConfig> configs)
     {
         var team = new ActorsTeam();
         foreach (var actorConfig in configs)
@@ -76,11 +76,11 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
         return false;
     }
 
-    public ActorAiBase.OuterWorldInfo GetOuterWorldInfo(Actor actor, double previousCastTime)
+    public IActorAi.OuterWorldInfo GetOuterWorldInfo(Actor actor, double previousCastTime)
     {
         if (_playerTeam.ContainsMember(actor))
         {
-            return new ActorAiBase.OuterWorldInfo
+            return new IActorAi.OuterWorldInfo
             {
                 AllyTeam = _playerTeam,
                 EnemyTeam = _enemyTeam,
@@ -90,7 +90,7 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
 
         if (_enemyTeam.ContainsMember(actor))
         {
-            return new ActorAiBase.OuterWorldInfo
+            return new IActorAi.OuterWorldInfo
             {
                 AllyTeam = _enemyTeam,
                 EnemyTeam = _playerTeam,

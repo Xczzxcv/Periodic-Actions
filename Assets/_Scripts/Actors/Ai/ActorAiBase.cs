@@ -1,21 +1,16 @@
 ﻿namespace Actors.Ai
 {
-internal abstract class ActorAiBase : IActorAi
+internal abstract class ActorAiBase<TConfig> : IActorAi
+where TConfig : ActorAiBaseConfig
 {
-    internal struct OuterWorldInfo
-    {
-        public ActorsTeam AllyTeam;
-        public ActorsTeam EnemyTeam;
-        public double PreviousCastTime;
-    }
-
     protected readonly Actor Actor;
+    protected readonly TConfig Config;
 
-    protected ActorAiBase(Actor actor)
+    protected ActorAiBase(Actor actor, TConfig config)
     {
         Actor = actor;
     }
 
-    public abstract ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo);
+    public abstract ActorSpellCastChoice ChooseSpell(IActorAi.OuterWorldInfo outerInfo);
 }
 }

@@ -11,7 +11,7 @@ internal abstract class ActorManager : IDisposable
         Self = self;
     }
 
-    public abstract void Init(Actor.Config config);
+    public abstract void Init(ActorConfig config);
 
     public virtual void Dispose()
     { }

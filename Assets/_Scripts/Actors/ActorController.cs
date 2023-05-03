@@ -22,7 +22,7 @@ internal class ActorController : MonoBehaviour, IDisposable
     }
     
     private Actor _actor;
-    private ActorAiBase.OuterWorldInfo _outerWorldInfo;
+    private IActorAi.OuterWorldInfo _outerWorldInfo;
     private SpellChoiceController _spellChoiceController;
     private ISpell _chosenSpell;
 
@@ -37,7 +37,7 @@ internal class ActorController : MonoBehaviour, IDisposable
         view.Setup(_actor);
     }
 
-    public SpellCastResult CastSpell(ActorAiBase.OuterWorldInfo outerWorldInfo)
+    public SpellCastResult CastSpell(IActorAi.OuterWorldInfo outerWorldInfo)
     {
         Debug.Assert(_actor.Spells.CanStartSpellCast(), $"{_actor} can't start cast spell");
 
@@ -61,14 +61,11 @@ internal class ActorController : MonoBehaviour, IDisposable
 
     private void CastPlayerActorSpell([CanBeNull] Actor targetActor)
     {
-        var spellCastInfo = new SpellCastInfo(
-            _outerWorldInfo.PreviousCastTime,
-            _actor,
-            targetActor
-        );
-        var spellCastChoice = new ActorSpellCastChoice(
+        var spellCastChoice = ActorSpellCastChoice.Build(
             _chosenSpell.Id,
-            spellCastInfo
+            _actor,
+            targetActor,
+            _outerWorldInfo.PreviousCastTime
         );
 
         view.SetHighlighted(false);

@@ -1,64 +1,64 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using Spells;
 using Random = UnityEngine.Random;
 
 namespace Actors.Ai
 {
-internal class RandomActorAi : ActorAiBase
+internal class RandomActorAi : ActorAiBase<RandomAiConfig>
 {
-    public RandomActorAi(Actor actor) : base(actor)
+    public RandomActorAi(Actor actor, RandomAiConfig config) : base(actor, config)
     { }
 
-    public override ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo)
+    public override ActorSpellCastChoice ChooseSpell(IActorAi.OuterWorldInfo outerInfo)
     {
         var randomSpell = Actor.Spells.GetRandomSpell();
-        if (randomSpell.CastTarget == SpellCastTarget.NoTarget)
+        return RandomSpellCast(randomSpell, Actor, outerInfo);
+    }
+
+    public static ActorSpellCastChoice RandomSpellCast(ISpell spell, Actor caster, 
+        IActorAi.OuterWorldInfo outerInfo)
+    {
+        if (spell.CastTarget == SpellCastTarget.NoTarget)
         {
-            return CastSpellInternal(outerInfo, randomSpell.Id, null);
+            return ActorSpellCastChoice.Build( spell.Id, caster, null, outerInfo.PreviousCastTime);
         }
 
-        var targetTeam = randomSpell.CastTarget == SpellCastTarget.Ally
+        var targetTeam = spell.CastTarget == SpellCastTarget.Ally
             ? outerInfo.AllyTeam
             : outerInfo.EnemyTeam;
         if (targetTeam.Actors.All(actor => !actor.CanBeTargeted()))
         {
-            var notTargetedSpells = Actor.Spells.Spells.Values.Where(spell => spell.CastTarget == SpellCastTarget.NoTarget);
+            var notTargetedSpells = caster.Spells.Spells.Values
+                .Where(spell1 => spell1.CastTarget == SpellCastTarget.NoTarget)
+                .ToArray();
             if (notTargetedSpells.Any())
             {
-                return new ActorSpellCastChoice(
+                return ActorSpellCastChoice.Build(
                     notTargetedSpells.First().Id,
-                    new SpellCastInfo(outerInfo.PreviousCastTime, Actor, null)
+                    caster,
+                    null,
+                    outerInfo.PreviousCastTime
                 );
             }
 
-            throw new ArgumentException($"Can't find spell and target for {Actor} ");
+            throw new ArgumentException($"Can't find spell and target for {caster} ");
         }
 
+        const int saveCntMax = 300;
+        var saveCnt = 0;
         Actor randomTargetActor;
         do
         {
             randomTargetActor = targetTeam.Actors[Random.Range(0, targetTeam.Actors.Count)];
-        } while (!randomTargetActor.CanBeTargeted());
+        } while (!randomTargetActor.CanBeTargeted()
+                 && saveCnt++ < saveCntMax);
 
-        var spellTarget = randomSpell.CastTarget != SpellCastTarget.NoTarget
+        var spellTarget = spell.CastTarget != SpellCastTarget.NoTarget
             ? randomTargetActor
             : null;
 
-        return new ActorSpellCastChoice(
-            randomSpell.Id,
-            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, spellTarget)
-        );
-    }
-
-    private ActorSpellCastChoice CastSpellInternal(OuterWorldInfo outerInfo, string spellId,
-        [CanBeNull] Actor target)
-    {
-        return new ActorSpellCastChoice(
-            spellId,
-            new SpellCastInfo(outerInfo.PreviousCastTime, Actor, target)
-        );
+        return ActorSpellCastChoice.Build(spell.Id, caster, spellTarget, outerInfo.PreviousCastTime);
     }
 }
 }

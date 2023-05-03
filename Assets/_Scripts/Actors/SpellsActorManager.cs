@@ -23,7 +23,7 @@ internal class SpellsActorManager : ActorManager
         _spellsFactory = spellsFactory;
     }
 
-    public override void Init(Actor.Config config)
+    public override void Init(ActorConfig config)
     {
         Debug.Assert(config.SpellConfigs.Length > 0, $"No spells for '{config.Name}'");
         foreach (var spellConfig in config.SpellConfigs)

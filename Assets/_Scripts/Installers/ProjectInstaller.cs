@@ -1,4 +1,5 @@
 ﻿using Actors;
+using Actors.Ai;
 using Actors.Stats;
 using Spells;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class ProjectInstaller : MonoInstaller
         BindSpellAspectsFactory();
         BindSpellsFactory();
         BindStatsShiftFactory();
+        BindActorsAiFactory();
         BindActorsFactory();
         BindTimeManager();
     }
@@ -33,6 +35,11 @@ public class ProjectInstaller : MonoInstaller
     private void BindStatsShiftFactory()
     {
         Container.BindInterfacesTo<StatsShiftFactory>().AsSingle();
+    }
+
+    private void BindActorsAiFactory()
+    {
+        Container.Bind<IActorAiFactory>().To<ActorAiFactory>().AsSingle();
     }
 
     private void BindActorsFactory()

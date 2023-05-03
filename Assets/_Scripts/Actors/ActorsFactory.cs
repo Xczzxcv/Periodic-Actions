@@ -1,3 +1,4 @@
+using Actors.Ai;
 using Actors.Stats;
 using Spells;
 using UnityEngine;
@@ -11,16 +12,19 @@ internal class ActorsFactory : MonoBehaviour, IActorsFactory
 
     private ISpellsFactory _spellsFactory;
     private IStatsShiftFactory _statsShiftFactory;
+    private IActorAiFactory _actorAiFactory;
     private DiContainer _diContainer;
 
     [Inject]
     private void Construct(
         ISpellsFactory spellsFactory,
         IStatsShiftFactory statsShiftFactory,
+        IActorAiFactory actorAiFactory,
         DiContainer diContainer)
     {
         _spellsFactory = spellsFactory;
         _statsShiftFactory = statsShiftFactory;
+        _actorAiFactory = actorAiFactory;
         _diContainer = diContainer;
     }
 
@@ -33,9 +37,10 @@ internal class ActorsFactory : MonoBehaviour, IActorsFactory
         return actorController;
     }
 
-    public Actor CreateActor(TimelineManager timelineManager, Actor.Config config)
+    public Actor CreateActor(TimelineManager timelineManager, ActorConfig config)
     {
-        var newActor = new Actor(timelineManager, _spellsFactory, _statsShiftFactory);
+        var newActor = new Actor(timelineManager, _spellsFactory, _statsShiftFactory,
+            _actorAiFactory);
 
         #region Debug
 

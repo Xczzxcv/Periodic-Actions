@@ -22,4 +22,4 @@ MonoBehaviour:
     - rid: 139045371283767298
       type: {class: ArmorSpellAspectConfig, ns: Spells.Aspects, asm: Assembly-CSharp}
       data:
-        ArmorAmount: 10
+        ArmorAmount: 25

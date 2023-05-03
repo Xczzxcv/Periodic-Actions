@@ -22,7 +22,7 @@ internal class StatsActorManager : ActorManager, IStatsProvider
         _statsShiftFactory = statsShiftFactory;
     }
 
-    public override void Init(Actor.Config config)
+    public override void Init(ActorConfig config)
     {
         UpdateAllStatValues();
         SubscribeOnAllStatUpdates();
