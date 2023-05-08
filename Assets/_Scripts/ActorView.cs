@@ -27,10 +27,13 @@ internal class ActorView : MonoBehaviour, IDisposable
     [SerializeField] private Color regularColor;
     [SerializeField] private Color highlightedColor;
     [SerializeField] private float highlightSwitchAnimDuration;
+    [Header("Ball hit positions")]
+    [SerializeField] private Transform playerBallHitPos;
+    [SerializeField] private Transform enemyBallHitPos;
 
     private readonly CompositeDisposable _disposables = new();
 
-    private Actor _actor;
+    private IActor _actor;
     private ActorControllersCollection _actorControllers;
 
     public void Init(ActorControllersCollection actorControllers)
@@ -38,7 +41,7 @@ internal class ActorView : MonoBehaviour, IDisposable
         _actorControllers = actorControllers;
     }
 
-    public void Setup(Actor actor)
+    public void Setup(IActor actor)
     {
         Unsubscribe(_actor);
         _actor = actor;
@@ -53,7 +56,7 @@ internal class ActorView : MonoBehaviour, IDisposable
         // SetupSide(_actor.Side.Value);
     }
 
-    private void Subscribe(Actor actor)
+    private void Subscribe(IActor actor)
     {
         Observable.CombineLatest(actor.Stats.Hp, actor.Stats.MaxHp).Subscribe(SetupHp).AddTo(_disposables);
         actor.Stats.Armor.Subscribe(SetupArmor).AddTo(_disposables);
@@ -90,8 +93,9 @@ internal class ActorView : MonoBehaviour, IDisposable
         };
     }
 
-    private void SetupPointerController(Actor actor)
+    private void SetupPointerController(IActor actor)
     {
+        return;
         pointerController.Setup(actor);
 
         actor.Spells.CastingSpell.Subscribe(CastingSpellHandler).AddTo(_disposables);
@@ -122,7 +126,7 @@ internal class ActorView : MonoBehaviour, IDisposable
         }
     }
 
-    private void Unsubscribe(Actor actor)
+    private void Unsubscribe(IActor actor)
     {
         _disposables.Clear();
     }
@@ -133,6 +137,19 @@ internal class ActorView : MonoBehaviour, IDisposable
             ? highlightedColor
             : regularColor;
         model.DOColor(targetColor, highlightSwitchAnimDuration);
+    }
+
+    public Vector3 GetBallHitPos()
+    {
+        var side = _actor.Side.Value;
+        var resultTransform = side switch
+        {
+            ActorSide.Player => playerBallHitPos,
+            ActorSide.Enemy => enemyBallHitPos,
+            _ => throw ThrowHelper.GetSideException(_actor, side)
+        };
+
+        return resultTransform.position;
     }
 
     public void Dispose()

@@ -51,7 +51,7 @@ internal partial class ActorsManager
         }
 
         var item = _playerInventory.CellsContent.ElementAt(itemIndex);
-        var resultActor = Enumerable.Empty<Actor>()
+        var resultActor = Enumerable.Empty<IActor>()
             .Concat(_playerTeam.Actors)
             .Concat(_enemyTeam.Actors)
             .FirstOrDefault(actor => actor.Name == _actorName);
@@ -77,7 +77,7 @@ internal partial class ActorsManager
 
     private void ProcessItemFromActorBtnClick()
     {
-        var resultActor = Enumerable.Empty<Actor>()
+        var resultActor = Enumerable.Empty<IActor>()
             .Concat(_playerTeam.Actors)
             .Concat(_enemyTeam.Actors)
             .FirstOrDefault(actor => actor.Name == _actorName);

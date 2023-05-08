@@ -9,6 +9,7 @@ namespace Actors
 internal class ActorsFactory : MonoBehaviour, IActorsFactory
 {
     [SerializeField] private ActorController actorPrefab;
+    [SerializeField] private ActorConfig absoluteActorConfig;
 
     private ISpellsFactory _spellsFactory;
     private IStatsShiftFactory _statsShiftFactory;
@@ -37,18 +38,18 @@ internal class ActorsFactory : MonoBehaviour, IActorsFactory
         return actorController;
     }
 
-    public Actor CreateActor(TimelineManager timelineManager, ActorConfig config)
+    public IActor CreateActor(TimelineManager timelineManager, ActorConfig config)
     {
-        var newActor = new Actor(timelineManager, _spellsFactory, _statsShiftFactory,
-            _actorAiFactory);
-
-        #region Debug
-
-        // config.SpellConfigs = _spellsFactory.GetAllSpellConfigs();
-
-        #endregion
-
+        var newActor = new Actor(timelineManager, _spellsFactory, _statsShiftFactory, _actorAiFactory);
         newActor.Init(config);
+
+        return newActor;
+    }
+
+    public AbsoluteActor CreateAbsoluteActor()
+    {
+        var newActor = new AbsoluteActor();
+        newActor.Init(absoluteActorConfig);
 
         return newActor;
     }

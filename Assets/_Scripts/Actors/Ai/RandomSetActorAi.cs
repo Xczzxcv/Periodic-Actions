@@ -9,7 +9,7 @@ internal class RandomSetActorAi : ActorAiBase<RandomSetActorAiConfig>
 {
     private readonly HashSet<ISpell> _spellsToUse = new();
 
-    public RandomSetActorAi(Actor actor, RandomSetActorAiConfig config) : base(actor, config)
+    public RandomSetActorAi(IActor actor, RandomSetActorAiConfig config) : base(actor, config)
     {
         RefillSkillSet();
     }

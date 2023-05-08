@@ -11,7 +11,7 @@ internal interface ISpell : IDisposable
     public void InitialCast(SpellCastInfo castInfo);
     public void MainCast(SpellCastInfo castInfo);
     public void PostCast(SpellCastInfo castInfo);
-    public double GetDelay();
+    public int GetDelay();
     Dictionary<string, object> GetProperties();
 }
 }

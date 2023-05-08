@@ -12,7 +12,7 @@ internal class ActorsSpellCastManager
         _stateMachine.EnterState<IdleState>();
     }
 
-    public void TeamSpellCast(ActorsTeam castersTeam, double castTime)
+    public void TeamSpellCast(ActorsTeam castersTeam, int castTime)
     {
         foreach (var caster in castersTeam.Actors)
         {

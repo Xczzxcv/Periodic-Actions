@@ -4,11 +4,11 @@ namespace Inventory
 {
 internal class ActorInventory : Inventory
 {
-    private readonly Actor _owner;
+    private readonly IActor _owner;
     
     private const int ActorInventorySize = 1;
     
-    public ActorInventory(Actor owner) : base(ActorInventorySize)
+    public ActorInventory(IActor owner) : base(ActorInventorySize)
     {
         _owner = owner;
     }

@@ -2,6 +2,6 @@
 {
 internal interface IActorAiFactory
 {
-    IActorAi Create(ActorAiBaseConfig aiConfig, Actor actor);
+    IActorAi Create(ActorAiBaseConfig aiConfig, IActor actor);
 }
 }

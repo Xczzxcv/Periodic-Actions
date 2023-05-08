@@ -8,7 +8,7 @@ internal class ItemStatsShift : StatsShift<ItemStatsShiftConfig>
 {
     private IDisposable _subscription;
 
-    public ItemStatsShift(ItemStatsShiftConfig config, Actor owner, string sourceId) 
+    public ItemStatsShift(ItemStatsShiftConfig config, IActor owner, string sourceId) 
         : base(config, owner, sourceId)
     { }
 

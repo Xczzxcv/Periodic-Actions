@@ -3,10 +3,10 @@
 internal abstract class ActorAiBase<TConfig> : IActorAi
 where TConfig : ActorAiBaseConfig
 {
-    protected readonly Actor Actor;
+    protected readonly IActor Actor;
     protected readonly TConfig Config;
 
-    protected ActorAiBase(Actor actor, TConfig config)
+    protected ActorAiBase(IActor actor, TConfig config)
     {
         Actor = actor;
     }

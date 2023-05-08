@@ -9,6 +9,6 @@ internal class SelfStatShiftSpellAspect : StatShiftSpellAspect<SelfStatShiftSpel
     public SelfStatShiftSpellAspect(SelfStatShiftSpellAspectConfig config, string spellId) : base(config, spellId)
     { }
 
-    protected override Actor GetStatsShiftTarget(SpellCastInfo spellCastInfo) => spellCastInfo.Caster;
+    protected override IActor GetStatsShiftTarget(SpellCastInfo spellCastInfo) => spellCastInfo.Caster;
 }
 }

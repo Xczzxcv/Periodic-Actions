@@ -10,17 +10,17 @@ namespace Spells
 {
 internal class ActorSpell : ISpell
 {
-    public string Id => Config.Id;
+    public string Id => _config.Id;
 
     public SpellCastTarget CastTarget { get; private set; }
-    protected readonly SpellConfig Config;
-    private readonly Actor _spellOwner;
+    private readonly SpellConfig _config;
+    private readonly IActor _spellOwner;
     private readonly ISpellAspectsFactory _spellAspectsFactory;
     private readonly List<ISpellAspect> _aspects = new();
 
-    public ActorSpell(SpellConfig config, Actor spellOwner, ISpellAspectsFactory spellAspectsFactory)
+    public ActorSpell(SpellConfig config, IActor spellOwner, ISpellAspectsFactory spellAspectsFactory)
     {
-        Config = config;
+        _config = config;
         _spellOwner = spellOwner;
         _spellAspectsFactory = spellAspectsFactory;
     }
@@ -33,9 +33,9 @@ internal class ActorSpell : ISpell
 
     private void InitAspects()
     {
-        foreach (var spellAspectConfig in Config.Aspects)
+        foreach (var spellAspectConfig in _config.Aspects)
         {
-            var spellAspect = _spellAspectsFactory.Create(spellAspectConfig, Config.Id);
+            var spellAspect = _spellAspectsFactory.Create(spellAspectConfig, _config.Id);
             _aspects.Add(spellAspect);
         }
     }
@@ -74,12 +74,13 @@ internal class ActorSpell : ISpell
         }
     }
 
-    public override string ToString() => $"Spell ({Config.Id})";
+    public override string ToString() => $"Spell ({_config.Id})";
 
-    public double GetDelay()
+    public int GetDelay()
     {
-        var delayReduction = _spellOwner.Stats.GetStat(ActorStat.DelayReduction);
-        return Math.Max(0, Config.Delay - delayReduction);
+        var delayReduction = (int)_spellOwner.Stats.GetStat(ActorStat.DelayReduction);
+        var delay = Math.Max(0, _config.Delay - delayReduction);
+        return delay * 2; // because we must end spell when ball near us
     }
 
     public Dictionary<string, object> GetProperties()

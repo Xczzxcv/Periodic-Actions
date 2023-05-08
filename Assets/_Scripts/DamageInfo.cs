@@ -2,12 +2,12 @@
 
 internal readonly struct DamageInfo
 {
-    public readonly Actor DamageSource;
+    public readonly IActor DamageSource;
     public readonly double DamageAmount;
     public readonly bool PierceArmor;
     public readonly bool ReturnedDamage;
 
-    public DamageInfo(Actor damageSource, double damageAmount, bool pierceArmor,
+    public DamageInfo(IActor damageSource, double damageAmount, bool pierceArmor,
         bool returnedDamage)
     {
         DamageSource = damageSource;

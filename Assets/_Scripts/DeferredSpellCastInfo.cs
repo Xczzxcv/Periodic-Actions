@@ -3,7 +3,7 @@ using Spells;
 
 internal readonly struct DeferredSpellCastInfo
 {
-    public readonly double CastTime;
+    public readonly int CastTime;
     public readonly ISpell Spell;
     public readonly SpellCastInfo CastInfo;
     public readonly bool IsOrderFromPlayer;
@@ -12,19 +12,19 @@ internal readonly struct DeferredSpellCastInfo
     private static long _globalOrderNumber;
 
     public DeferredSpellCastInfo(
-        double castTime,
+        int castTime,
         ISpell spell,
         SpellCastInfo castInfo,
         bool isOrderFromPlayer
     )
     {
         CastTime = castTime;
-            Spell = spell;
+        Spell = spell;
         CastInfo = castInfo;
         IsOrderFromPlayer = isOrderFromPlayer;
         _orderNumber = _globalOrderNumber++;
     }
-    
+
     public override string ToString()
     {
         return $"[DSCI] Time: {CastTime}, {Spell}, {CastInfo}";

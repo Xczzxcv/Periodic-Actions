@@ -21,7 +21,7 @@ internal abstract class StatShiftSpellAspect<TConfig> : SpellAspect<TConfig>
     public override void PostCast(SpellCastInfo castInfo)
     { }
 
-    protected abstract Actor GetStatsShiftTarget(SpellCastInfo spellCastInfo);
+    protected abstract IActor GetStatsShiftTarget(SpellCastInfo spellCastInfo);
 
     public override Dictionary<string, object> GetProperties()
     {

@@ -20,56 +20,57 @@ internal class ActorController : MonoBehaviour, IDisposable
         SpellCasted,
         SpellInProcessOfCasting
     }
-    
-    private Actor _actor;
+
     private IActorAi.OuterWorldInfo _outerWorldInfo;
     private SpellChoiceController _spellChoiceController;
     private ISpell _chosenSpell;
+    
+    public IActor Actor { get; private set; }
 
     public void Init(ActorControllersCollection actorControllers)
     {
         view.Init(actorControllers);
     }
 
-    public void Setup(Actor actor)
+    public void Setup(IActor actor)
     {
-        _actor = actor;
-        view.Setup(_actor);
+        Actor = actor;
+        view.Setup(Actor);
     }
 
     public SpellCastResult CastSpell(IActorAi.OuterWorldInfo outerWorldInfo)
     {
-        Debug.Assert(_actor.Spells.CanStartSpellCast(), $"{_actor} can't start cast spell");
+        Debug.Assert(Actor.Spells.CanStartSpellCast(), $"{Actor} can't start cast spell");
 
         _outerWorldInfo = outerWorldInfo;
 
-        if (_actor.IsPlayerUnit)
+        if (Actor.IsPlayerUnit)
         {
             ShowSpellsToCast();
             return SpellCastResult.SpellInProcessOfCasting;
         }
 
-        var spellCastChoice = _actor.GetAiSpellChoice(_outerWorldInfo);
-        CastSpellInternal(_actor, spellCastChoice);
+        var spellCastChoice = Actor.Ai.ChooseSpell(_outerWorldInfo);
+        CastSpellInternal(Actor, spellCastChoice);
         return SpellCastResult.SpellCasted;
     }
 
-    private static void CastSpellInternal(Actor actor, ActorSpellCastChoice spellChoice)
+    private static void CastSpellInternal(IActor actor, ActorSpellCastChoice spellChoice)
     {
         actor.Spells.CastSpell(spellChoice);
     }
 
-    private void CastPlayerActorSpell([CanBeNull] Actor targetActor)
+    private void CastPlayerActorSpell([CanBeNull] IActor targetActor)
     {
         var spellCastChoice = ActorSpellCastChoice.Build(
             _chosenSpell.Id,
-            _actor,
+            Actor,
             targetActor,
             _outerWorldInfo.PreviousCastTime
         );
 
         view.SetHighlighted(false);
-        CastSpellInternal(_actor, spellCastChoice);
+        CastSpellInternal(Actor, spellCastChoice);
 
         Destroy(_spellChoiceController.gameObject);
         _spellChoiceController = null;
@@ -78,7 +79,7 @@ internal class ActorController : MonoBehaviour, IDisposable
     private void ShowSpellsToCast()
     {
         _spellChoiceController = Instantiate(spellChoicePrefab, spellChoiceParent);
-        _spellChoiceController.Setup(_actor.Spells.Spells.Values);
+        _spellChoiceController.Setup(Actor.Spells.Spells.Values);
         _spellChoiceController.ChosenSpell.Subscribe(OnNextSpellChosen);
         view.SetHighlighted(true);
     }
@@ -126,6 +127,11 @@ internal class ActorController : MonoBehaviour, IDisposable
         {
             CastPlayerActorSpell(null);
         }
+    }
+
+    public Vector3 GetBallHitPos()
+    {
+        return view.GetBallHitPos();
     }
 
     public void Dispose()

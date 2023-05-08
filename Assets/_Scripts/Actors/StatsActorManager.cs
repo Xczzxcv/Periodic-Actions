@@ -17,7 +17,7 @@ internal class StatsActorManager : ActorManager, IStatsProvider
     private readonly ActorStatsCollection _complexStats = new();
     private readonly CompositeDisposable _compositeDisposable = new();
 
-    public StatsActorManager(IStatsShiftFactory statsShiftFactory, Actor self) : base(self)
+    public StatsActorManager(IStatsShiftFactory statsShiftFactory, IActor self) : base(self)
     {
         _statsShiftFactory = statsShiftFactory;
     }

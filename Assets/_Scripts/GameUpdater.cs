@@ -23,8 +23,7 @@ internal class GameUpdater : MonoBehaviour
         _timeManager.Update();
 
         while (!_timelineManager.IsPaused
-               && _timelineManager.Update(out var deferredCastInfo) ==
-               TimelineManager.UpdateResult.SpellProcessedAndCasted)
+               && _timelineManager.Update() == TimelineManager.UpdateResult.SpellProcessedAndCasted)
         { }
 
         actorsManager.OnUpdate();

@@ -7,6 +7,7 @@ internal interface IActorsFactory
     ActorController CreateActorController(Vector3 spawnPos, 
         ActorControllersCollection actorControllers);
 
-    Actor CreateActor(TimelineManager timelineManager, ActorConfig config);
+    IActor CreateActor(TimelineManager timelineManager, ActorConfig config);
+    AbsoluteActor CreateAbsoluteActor();
 }
 }

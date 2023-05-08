@@ -9,6 +9,6 @@ internal class HealSelfSpellAspect : HealSpellAspect<HealSelfSpellAspectConfig>
     public HealSelfSpellAspect(HealSelfSpellAspectConfig config, string spellId) : base(config, spellId)
     { }
 
-    protected override Actor GetHealTarget(SpellCastInfo castInfo) => castInfo.Caster;
+    protected override IActor GetHealTarget(SpellCastInfo castInfo) => castInfo.Caster;
 }
 }

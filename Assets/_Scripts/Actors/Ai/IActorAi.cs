@@ -6,9 +6,9 @@ internal interface IActorAi
     {
         public ActorsTeam AllyTeam;
         public ActorsTeam EnemyTeam;
-        public double PreviousCastTime;
+        public int PreviousCastTime;
     }
     
-    public abstract ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo);
+    public ActorSpellCastChoice ChooseSpell(OuterWorldInfo outerInfo);
 }
 }

@@ -23,7 +23,7 @@ internal class ActorsSpawnManager : MonoBehaviour, IDisposable
         _actorsFactory = actorsFactory;
     }
     
-    public Actor SpawnActor(ActorConfig actorConfig)
+    public IActor SpawnActor(ActorConfig actorConfig)
     {
         var actor = _actorsFactory.CreateActor(_timelineManager, actorConfig);
         var spawnPos = GetSpawnPos(actor);
@@ -36,7 +36,7 @@ internal class ActorsSpawnManager : MonoBehaviour, IDisposable
         return actor;
     }
 
-    private Vector3 GetSpawnPos(Actor actor)
+    private Vector3 GetSpawnPos(IActor actor)
     {
         var posCollection = actor.Side.Value switch
         {
@@ -57,7 +57,7 @@ internal class ActorsSpawnManager : MonoBehaviour, IDisposable
         return positionTransform.position;
     }
 
-    public ActorController GetController(Actor actor) => _actorControllers[actor];
+    public ActorController GetController(IActor actor) => _actorControllers[actor];
 
     public void Dispose()
     {

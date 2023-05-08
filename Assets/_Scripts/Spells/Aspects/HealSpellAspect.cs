@@ -23,7 +23,7 @@ internal abstract class HealSpellAspect<TConfig> : SpellAspect<TConfig>
     public override void PostCast(SpellCastInfo castInfo)
     { }
 
-    protected abstract Actor GetHealTarget(SpellCastInfo castInfo);
+    protected abstract IActor GetHealTarget(SpellCastInfo castInfo);
 
     public override Dictionary<string, object> GetProperties()
     {

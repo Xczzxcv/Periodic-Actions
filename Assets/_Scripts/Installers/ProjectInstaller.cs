@@ -10,7 +10,6 @@ namespace Installers
 public class ProjectInstaller : MonoInstaller
 {
     [SerializeField] private SpellsFactory spellsFactory;
-    [SerializeField] private ActorsFactory actorsFactory;
 
     public override void InstallBindings()
     {
@@ -18,7 +17,6 @@ public class ProjectInstaller : MonoInstaller
         BindSpellsFactory();
         BindStatsShiftFactory();
         BindActorsAiFactory();
-        BindActorsFactory();
         BindTimeManager();
     }
 
@@ -40,11 +38,6 @@ public class ProjectInstaller : MonoInstaller
     private void BindActorsAiFactory()
     {
         Container.Bind<IActorAiFactory>().To<ActorAiFactory>().AsSingle();
-    }
-
-    private void BindActorsFactory()
-    {
-        Container.BindInterfacesTo<ActorsFactory>().FromInstance(actorsFactory).AsSingle();
     }
 
     private void BindTimeManager()

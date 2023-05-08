@@ -45,7 +45,7 @@ internal class IdleState : State<ActorsSpellCastManager>, IUpdatableState<Actors
         AddToCastQueue(caster, previousCastTime);
     }
 
-    public void AddToCastQueue(Actor caster, double previousCastTime)
+    public void AddToCastQueue(IActor caster, int previousCastTime)
     {
         _unitsWaitingList.Enqueue((caster, previousCastTime));
     }

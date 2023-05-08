@@ -16,7 +16,7 @@ internal class SpellsActorManager : ActorManager
     private readonly Dictionary<string, ISpell> _spells = new();
     private readonly ReactiveProperty<(ISpell Spell, SpellCastInfo CastInfo)> _castingSpell = new();
 
-    public SpellsActorManager(TimelineManager timelineManager, ISpellsFactory spellsFactory, Actor self) 
+    public SpellsActorManager(TimelineManager timelineManager, ISpellsFactory spellsFactory, IActor self) 
         : base(self)
     {
         _timelineManager = timelineManager;

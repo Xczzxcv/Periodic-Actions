@@ -9,7 +9,7 @@ internal static class ThrowHelper
         return new ArgumentException($"Unsupported config type in factory of {typeof(TResult)} ({config?.GetType()}) {config}");
     }
     
-    public static Exception GetSideException([CanBeNull] Actor actor, ActorSide side)
+    public static Exception GetSideException([CanBeNull] IActor actor, ActorSide side)
     {
         return new ArgumentException($"Unknown {actor} side {side}");
     }

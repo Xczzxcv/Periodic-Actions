@@ -14,8 +14,8 @@ internal readonly struct ActorSpellCastChoice
         CastInfo = castInfo;
     }
 
-    public static ActorSpellCastChoice Build(string spellId, Actor caster, [CanBeNull] Actor target,
-        double previousCastTime)
+    public static ActorSpellCastChoice Build(string spellId, IActor caster, [CanBeNull] IActor target,
+        int previousCastTime)
     {
         return new ActorSpellCastChoice(
             spellId,

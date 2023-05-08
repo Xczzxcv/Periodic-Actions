@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Actors;
 using Actors.Ai;
 using Inventory;
@@ -19,6 +20,8 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
     private ActorsSpellCastManager _actorsSpellCastManager;
 
     public int UnitsQueueSize => _actorsSpellCastManager.UnitsQueueSize;
+    public ActorController PlayerActorController => actorsSpawnManager.GetController(_playerTeam.Actors.First());
+    public ActorController EnemyActorController => actorsSpawnManager.GetController(_enemyTeam.Actors.First());
 
     [Inject]
     private void Construct(PlayerInventory playerInventory,
@@ -76,7 +79,7 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
         return false;
     }
 
-    public IActorAi.OuterWorldInfo GetOuterWorldInfo(Actor actor, double previousCastTime)
+    public IActorAi.OuterWorldInfo GetOuterWorldInfo(IActor actor, int previousCastTime)
     {
         if (_playerTeam.ContainsMember(actor))
         {
@@ -108,7 +111,7 @@ internal partial class ActorsManager : MonoBehaviour, IDisposable
         _actorsSpellCastManager.TeamSpellCast(_enemyTeam, initCastTime);
     }
 
-    public ActorController GetController(Actor actor)
+    public ActorController GetController(IActor actor)
     {
         return actorsSpawnManager.GetController(actor);
     }

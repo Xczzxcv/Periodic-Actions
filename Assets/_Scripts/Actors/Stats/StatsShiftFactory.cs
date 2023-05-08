@@ -5,7 +5,7 @@ internal class StatsShiftFactory : IStatsShiftFactory
     public struct Args
     {
         public StatsShiftConfig statsShiftConfig;
-        public Actor owner;
+        public IActor owner;
         public string SourceId;
     }
 

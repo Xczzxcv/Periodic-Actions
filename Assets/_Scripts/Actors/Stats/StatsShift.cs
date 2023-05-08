@@ -10,10 +10,10 @@ where TConfig : StatsShiftConfig
     public event Action<IStatsShift> StatShiftEnded;
 
     protected readonly TConfig Config;
-    protected readonly Actor Owner;
+    protected readonly IActor Owner;
     protected readonly ActorStatsCollection Stats;
 
-    protected StatsShift(TConfig config, Actor owner, string sourceId)
+    protected StatsShift(TConfig config, IActor owner, string sourceId)
     {
         Config = config;
         Owner = owner;

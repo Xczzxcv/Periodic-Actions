@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Actors
 {
-internal class Actor : IDisposable
+internal class Actor : IActor
 {
     public bool IsPlayerUnit => Side.Value == ActorSide.Player;
     public bool IsAlive => !IsDead.Value;
@@ -17,15 +17,15 @@ internal class Actor : IDisposable
     public IReadOnlyReactiveProperty<ActorSide> Side => _side;
     public IReadOnlyReactiveProperty<bool> IsDead { get; private set; }
     [CanBeNull] public string Name { get; private set; }
+    public SpellsActorManager Spells { get; }
+    public StatsActorManager Stats { get; }
+    public ActorInventory Inventory { get; }
+    public IActorAi Ai { get; private set; }
 
     private readonly TimelineManager _timelineManager;
 
     private ReactiveProperty<ActorSide> _side;
-    public readonly SpellsActorManager Spells;
-    public readonly StatsActorManager Stats;
-    public readonly ActorInventory Inventory;
     private readonly IActorAiFactory _actorAiFactory;
-    private IActorAi _ai;
 
     public Actor(TimelineManager timelineManager, 
         ISpellsFactory spellsFactory,
@@ -45,7 +45,7 @@ internal class Actor : IDisposable
         Spells.Init(config);
         _side = new (config.Side);
         IsDead = Stats.Hp.Select(hp => hp <= 0).ToReactiveProperty();
-        _ai = config.Side == ActorSide.Enemy
+        Ai = config.Side == ActorSide.Enemy
             ? _actorAiFactory.Create(config.AiConfig, this)
             : new MockActorAi(this);
 
@@ -97,12 +97,7 @@ internal class Actor : IDisposable
 
     public override string ToString() => $"Actor '{Name}'";
 
-    public ActorSpellCastChoice GetAiSpellChoice(IActorAi.OuterWorldInfo outerWorldInfo)
-    {
-        return _ai.ChooseSpell(outerWorldInfo);
-    }
-
-    public static bool IsAllies([CanBeNull] Actor actor1, [CanBeNull] Actor actor2)
+    public static bool IsAllies([CanBeNull] IActor actor1, [CanBeNull] IActor actor2)
     {
         return actor1?.IsPlayerUnit == actor2?.IsPlayerUnit;
     }

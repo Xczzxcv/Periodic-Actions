@@ -24,7 +24,7 @@ internal class ActorTargetPointerController : MonoBehaviour
         _timeManager = timeManager;
     }
 
-    public void Setup(Actor actor)
+    public void Setup(IActor actor)
     {
         var side = actor.Side.Value;
         var sourcePos = side switch

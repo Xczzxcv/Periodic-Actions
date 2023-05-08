@@ -2,7 +2,7 @@
 {
 internal class ActorAiFactory : IActorAiFactory
 {
-    public IActorAi Create(ActorAiBaseConfig aiConfig, Actor actor)
+    public IActorAi Create(ActorAiBaseConfig aiConfig, IActor actor)
     {
         return aiConfig switch
         {

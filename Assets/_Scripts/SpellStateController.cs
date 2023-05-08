@@ -12,15 +12,19 @@ internal class SpellStateController : UIBehaviour, IDisposable
     [SerializeField] private Image progressBar;
     [SerializeField] private TextMeshProUGUI countdownText;
 
-    [CanBeNull] private IDisposable _subscription;
     private TimeManager _timeManager;
-    private double _initCastSpellTime;
-    private double _mainCastSpellTime;
+    private BallHitManager _ballHitManager;
+
+    private int _initCastSpellTime;
+    private int _mainCastSpellTime;
+    [CanBeNull] private IDisposable _subscription;
 
     [Inject]
-    private void Construct(TimeManager timeManager)
+    private void Construct(TimeManager timeManager, 
+        BallHitManager ballHitManager)
     {
         _timeManager = timeManager;
+        _ballHitManager = ballHitManager;
     }
 
     public void Setup([CanBeNull] ISpell spell, SpellCastInfo castInfo)
@@ -36,11 +40,11 @@ internal class SpellStateController : UIBehaviour, IDisposable
 
     private void Update()
     {
-        var currentTime = _timeManager.CurrentTime.Value;
+        var currentTime = _ballHitManager.BallHitCounter;
         progressBar.fillAmount = Mathf.InverseLerp(
-            (float) _initCastSpellTime,
-            (float) _mainCastSpellTime,
-            (float) currentTime
+            _initCastSpellTime,
+            _mainCastSpellTime,
+            currentTime
         );
         countdownText.text = TextHelper.Format(_mainCastSpellTime - currentTime);
     }

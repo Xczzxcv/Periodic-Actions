@@ -28,12 +28,14 @@ internal class TimelineManager
     private readonly ReactiveProperty<DeferredSpellCastInfo> _postCastedSpellInfo = new ();
     private readonly List<DeferredSpellCastInfo> _spellsToCast = new ();
     private readonly TimeManager _timeManager;
+    private readonly BallHitManager _ballHitManager;
 
     private double _lastMainCastedPlayerSpellTime = double.NegativeInfinity;
 
-    public TimelineManager(TimeManager timeManager)
+    public TimelineManager(TimeManager timeManager, BallHitManager ballHitManager)
     {
         _timeManager = timeManager;
+        _ballHitManager = ballHitManager;
     }
 
     public void AddSpellCastRequest(ISpell spell, SpellCastInfo castInfo)
@@ -50,9 +52,8 @@ internal class TimelineManager
         _spellsToCast.Sort(DeferredSpellCastInfo.TimeComparison);
     }
 
-    public UpdateResult Update(out DeferredSpellCastInfo deferredCastInfo)
+    public UpdateResult Update()
     {
-        deferredCastInfo = default;
         if (IsPaused)
         {
             return UpdateResult.NoSpellsProcessed;
@@ -63,8 +64,8 @@ internal class TimelineManager
             return UpdateResult.NoSpellsProcessed;
         }
 
-        deferredCastInfo = _spellsToCast.Last();
-        if (_timeManager.CurrentTime.Value < deferredCastInfo.CastTime)
+        var deferredCastInfo = _spellsToCast.Last();
+        if (_ballHitManager.BallHitCounter < deferredCastInfo.CastTime)
         {
             return UpdateResult.NoSpellsProcessed;
         }

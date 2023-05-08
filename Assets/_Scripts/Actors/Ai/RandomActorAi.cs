@@ -7,7 +7,7 @@ namespace Actors.Ai
 {
 internal class RandomActorAi : ActorAiBase<RandomAiConfig>
 {
-    public RandomActorAi(Actor actor, RandomAiConfig config) : base(actor, config)
+    public RandomActorAi(IActor actor, RandomAiConfig config) : base(actor, config)
     { }
 
     public override ActorSpellCastChoice ChooseSpell(IActorAi.OuterWorldInfo outerInfo)
@@ -16,7 +16,7 @@ internal class RandomActorAi : ActorAiBase<RandomAiConfig>
         return RandomSpellCast(randomSpell, Actor, outerInfo);
     }
 
-    public static ActorSpellCastChoice RandomSpellCast(ISpell spell, Actor caster, 
+    public static ActorSpellCastChoice RandomSpellCast(ISpell spell, IActor caster, 
         IActorAi.OuterWorldInfo outerInfo)
     {
         if (spell.CastTarget == SpellCastTarget.NoTarget)
@@ -47,7 +47,7 @@ internal class RandomActorAi : ActorAiBase<RandomAiConfig>
 
         const int saveCntMax = 300;
         var saveCnt = 0;
-        Actor randomTargetActor;
+        IActor randomTargetActor;
         do
         {
             randomTargetActor = targetTeam.Actors[Random.Range(0, targetTeam.Actors.Count)];

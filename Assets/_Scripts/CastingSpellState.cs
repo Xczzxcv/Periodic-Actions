@@ -6,7 +6,7 @@ using UniRx;
 
 internal class CastingSpellState : StateWithArgs<ActorsSpellCastManager, CastingSpellState.Args>
 {
-    private readonly Dictionary<Actor, IDisposable> _actorSpellUsageSubscriptions = new();
+    private readonly Dictionary<IActor, IDisposable> _actorSpellUsageSubscriptions = new();
     private readonly TimelineManager _timelineManager;
     private readonly ActorsManager _actorsManager;
     private SpellCastQueue _spellCastQueue;
@@ -40,7 +40,7 @@ internal class CastingSpellState : StateWithArgs<ActorsSpellCastManager, Casting
         ProcessSpellCastConsequences(castInfo.Caster, castInfo.PreviousCastTime, spellCastResult);
     }
 
-    private void ProcessSpellCastConsequences(Actor caster, double previousCastTime,
+    private void ProcessSpellCastConsequences(IActor caster, double previousCastTime,
         ActorController.SpellCastResult spellCastResult)
     {
         if (spellCastResult != ActorController.SpellCastResult.SpellInProcessOfCasting)
@@ -79,7 +79,7 @@ internal class CastingSpellState : StateWithArgs<ActorsSpellCastManager, Casting
         StateMachine.EnterState<IdleState>();
     }
 
-    private ActorController.SpellCastResult ProcessNewSpellCast(Actor caster, double previousCastTime)
+    private ActorController.SpellCastResult ProcessNewSpellCast(IActor caster, int previousCastTime)
     {
         if (!caster.Spells.CanStartSpellCast())
         {
@@ -105,5 +105,5 @@ internal class CastingSpellState : StateWithArgs<ActorsSpellCastManager, Casting
     }
 }
 
-internal class SpellCastQueue : Queue<(Actor Caster, double PreviousCastTime)>
+internal class SpellCastQueue : Queue<(IActor Caster, int PreviousCastTime)>
 { }

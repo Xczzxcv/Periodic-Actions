@@ -4,9 +4,9 @@ namespace Actors
 {
 internal abstract class ActorManager : IDisposable
 {
-    protected readonly Actor Self;
+    protected readonly IActor Self;
 
-    protected ActorManager(Actor self)
+    protected ActorManager(IActor self)
     {
         Self = self;
     }

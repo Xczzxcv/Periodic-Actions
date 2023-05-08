@@ -31,7 +31,7 @@ internal class SpellsFactory : MonoBehaviour, ISpellsFactory
         }
     }
 
-    public ISpell Create(string spellId, Actor spellOwner)
+    public ISpell Create(string spellId, IActor spellOwner)
     {
         var spellConfig = _spellConfigsCollection[spellId];
         var actorSpell = new ActorSpell(spellConfig, spellOwner, _spellAspectsFactory);

@@ -6,14 +6,14 @@ namespace Spells
 {
 internal readonly struct SpellCastInfo : IEquatable<SpellCastInfo>
 {
-    public readonly double InitialCastTime;
-    public readonly Actor Caster;
-    [CanBeNull] public readonly Actor Target;
+    public readonly int InitialCastTime;
+    public readonly IActor Caster;
+    [CanBeNull] public readonly IActor Target;
 
     public SpellCastInfo(
-        double initialCastTime,
-        Actor caster,
-        [CanBeNull] Actor target
+        int initialCastTime,
+        IActor caster,
+        [CanBeNull] IActor target
     )
     {
         InitialCastTime = initialCastTime;

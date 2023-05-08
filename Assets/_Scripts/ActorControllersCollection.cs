@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Actors;
 
-internal class ActorControllersCollection : Dictionary<Actor, ActorController>, IDisposable
+internal class ActorControllersCollection : Dictionary<IActor, ActorController>, IDisposable
 {
     public void Dispose()
     {

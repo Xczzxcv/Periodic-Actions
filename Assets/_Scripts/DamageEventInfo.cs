@@ -2,11 +2,11 @@
 
 internal readonly struct DamageEventInfo
 {
-    public readonly Actor DamageTarget;
+    public readonly IActor DamageTarget;
     public readonly DamageInfo DamageInfo;
     public readonly double DealtDamageAmount;
 
-    public DamageEventInfo(Actor damageTarget, DamageInfo damageInfo, double dealtDamageAmount)
+    public DamageEventInfo(IActor damageTarget, DamageInfo damageInfo, double dealtDamageAmount)
     {
         DamageTarget = damageTarget;
         DamageInfo = damageInfo;

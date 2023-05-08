@@ -5,9 +5,9 @@ namespace Actors.Ai
 {
 internal class MockActorAi : IActorAi
 {
-    private readonly Actor _actor;
+    private readonly IActor _actor;
 
-    public MockActorAi(Actor actor)
+    public MockActorAi(IActor actor)
     {
         _actor = actor;
     }

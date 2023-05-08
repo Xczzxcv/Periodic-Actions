@@ -10,7 +10,7 @@ internal class TempCountStatsShift : StatsShift<TempCountStatsShiftConfig>
     private IDisposable _subscription;
     private int _counter;
 
-    public TempCountStatsShift(TempCountStatsShiftConfig config, Actor owner, string sourceId) 
+    public TempCountStatsShift(TempCountStatsShiftConfig config, IActor owner, string sourceId) 
         : base(config, owner, sourceId)
     {
         _counter = -1; // for increase when Subscribe called
